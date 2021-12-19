@@ -21,7 +21,7 @@ local Camera = game:GetService("Workspace").CurrentCamera
 --// Variables
 
 local LocalPlayer = Players.LocalPlayer
-local Title = loadstring(game:HttpGet("https://pastebin.com/raw/MRvRLax0"))()
+local Title = "Exunys Developer"
 local FileNames = {"Wall Hack", "Settings.json", "Visuals.json", "Crosshair.json"}
 local ServiceConnections = {PlayerAddedConnection = nil, PlayerRemovingConnection = nil, CrosshairConnection = nil}
 
