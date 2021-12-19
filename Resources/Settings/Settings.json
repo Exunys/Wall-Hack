@@ -1,8 +1,13 @@
 {
-  "AliveCheck": true,
-  "ReloadOnTeleport": true,
+  // Global Settings
+  
   "Enabled": true,
   "SendNotifications": true,
   "SaveSettings": true,
+  "ReloadOnTeleport": true,
+  
+  // Visuals Settings
+  
+  "AliveCheck": true,
   "TeamCheck": false
 }
