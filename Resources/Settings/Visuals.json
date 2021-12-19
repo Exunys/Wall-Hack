@@ -8,6 +8,7 @@
     "Thickness": 1,
     "Size": 2
   },
+  
   "BoxSettings": {
     "Enabled": true,
     "Thickness": 1,
@@ -17,6 +18,7 @@
     "Color": "50, 120, 255",
     "Transparency": 0.7
   },
+  
   "ESPSettings": {
     "DisplayName": true,
     "Enabled": true,
@@ -30,6 +32,7 @@
     "Outline": true,
     "TextColor": "30, 100, 255"
   },
+  
   "TracersSettings": {
     "Enabled": true,
     "Thickness": 1,
