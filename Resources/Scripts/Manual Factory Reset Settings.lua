@@ -53,8 +53,8 @@ getgenv().WallHack.Crosshair = {
     },
 
     Parts = {
-        X = Environment.Crosshair.CrosshairSettings.Parts.X,
-        Y = Environment.Crosshair.CrosshairSettings.Parts.Y
+        X = getgenv().WallHack.Crosshair.CrosshairSettings.Parts.X,
+        Y = getgenv().WallHack.Crosshair.CrosshairSettings.Parts.Y
     }
 }
 
