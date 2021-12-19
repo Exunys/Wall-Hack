@@ -123,7 +123,7 @@ If the script is not running upon execution, try a few of the solutions below:
 * There is possibly a configuration that is unacceptable at most cases. Execute [this script](https://github.com/Exunys/Wall-Hack/blob/main/Resources/Scripts/Delete%20Settings%20-%20Fix%20Script.lua) and restart your game for changes to take effect.
 * Open your exploit's root folder, find a folder named `workspace` and look for a folder named `Exunys Developer`. Once you find it, delete this folder and restart your game.
 
-If none of these solutions work, check if your exploit is supported (read the **Notices** part). If the script stil doesn't work, contact Exunys & report your problem.
+If none of these solutions work, check if your exploit is supported (read the **Notices** part). If the script still doesn't work, contact Exunys & report the problem you are experiencing in detail.
 
 Check if your exploit is supported [here](https://github.com/Exunys/Wall-Hack/blob/main/Resources/Scripts/Support%20Checker.lua).
 ## Functions
