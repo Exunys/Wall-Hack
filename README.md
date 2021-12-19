@@ -210,14 +210,14 @@ getgenv().WallHack.Settings.AliveCheck = true
 
 --// Visuals Settings
 
-getgenv().Wallhack.Visuals.ESPSettings.Enabled = true
-getgenv().Wallhack.Visuals.TracersSettings.Enabled = true
-getgenv().Wallhack.Visuals.BoxSettings.Enabled = true
-getgenv().Wallhack.Visuals.HeadDotSettings.Enabled = true
+getgenv().WallHack.Visuals.ESPSettings.Enabled = true
+getgenv().WallHack.Visuals.TracersSettings.Enabled = true
+getgenv().WallHack.Visuals.BoxSettings.Enabled = true
+getgenv().WallHack.Visuals.HeadDotSettings.Enabled = true
 
 --// Crosshair
 
-getgenv().Wallhack.Crosshair.CrosshairSettings.Enabled = true
+getgenv().WallHack.Crosshair.CrosshairSettings.Enabled = true
 ```
 ## Contact Information
 - [Email](mailto:exunys@gmail.com)
