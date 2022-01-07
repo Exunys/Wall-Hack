@@ -163,7 +163,7 @@ local function AddESP(Player)
                 PlayerTable.ESP.Text = Content
             end
 
-            if OnScreen == true then
+            if OnScreen then
                 if Environment.Visuals.ESPSettings.Enabled then
                     if Environment.Settings.TeamCheck and Player.TeamColor ~= LocalPlayer.TeamColor then
                         PlayerTable.ESP.Visible = true
@@ -181,7 +181,7 @@ local function AddESP(Player)
                         Player.ESP.Visible = true
                     end
 
-                    if PlayerTable.ESP.Visible == true then
+                    if PlayerTable.ESP.Visible then
                         UpdateESP()
                     end
                 end
@@ -230,7 +230,7 @@ local function AddTracer(Player)
                 end
             end
 
-            if OnScreen == true then
+            if OnScreen then
                 if Environment.Visuals.TracersSettings.Enabled then
                     if Environment.Settings.TeamCheck and Player.TeamColor ~= LocalPlayer.TeamColor then
                         PlayerTable.Tracer.Visible = true
@@ -248,7 +248,7 @@ local function AddTracer(Player)
                         Player.Tracer.Visible = true
                     end
 
-                    if PlayerTable.Tracer.Visible == true then
+                    if PlayerTable.Tracer.Visible then
                         UpdateTracer()
                     end
                 end
@@ -370,7 +370,7 @@ local function AddBox(Player)
                 PlayerTable.Box.BottomRightLine.To = Vector2.new(BottomLeftPosition.X, BottomLeftPosition.Y)
             end
 
-            if OnScreen == true then
+            if OnScreen then
                 if Environment.Visuals.BoxSettings.Enabled then
                     if Environment.Settings.TeamCheck and Player.TeamColor ~= LocalPlayer.TeamColor then
                         Visibility(true)
@@ -388,9 +388,9 @@ local function AddBox(Player)
                         Visibility(true)
                     end
 
-                    if PlayerTable.Box.Square.Visible == true and PlayerTable.Box.TopLeftLine.Visible == false and PlayerTable.Box.TopRightLine.Visible == false and PlayerTable.Box.BottomLeftLine.Visible == false and PlayerTable.Box.BottomRightLine.Visible == false then
+                    if PlayerTable.Box.Square.Visible and not PlayerTable.Box.TopLeftLine.Visible and not PlayerTable.Box.TopRightLine.Visible and not PlayerTable.Box.BottomLeftLine.Visible and not PlayerTable.Box.BottomRightLine.Visible then
                         Update2DBox()
-                    elseif PlayerTable.Box.Square.Visible == false and PlayerTable.Box.TopLeftLine.Visible == true and PlayerTable.Box.TopRightLine.Visible == true and PlayerTable.Box.BottomLeftLine.Visible == true and PlayerTable.Box.BottomRightLine.Visible == true then
+                    elseif not PlayerTable.Box.Square.Visible and PlayerTable.Box.TopLeftLine.Visible and PlayerTable.Box.TopRightLine.Visible and PlayerTable.Box.BottomLeftLine.Visible and PlayerTable.Box.BottomRightLine.Visible then
                         Update3DBox()
                     end
                 end
@@ -439,7 +439,7 @@ local function AddHeadDot(Player)
                 PlayerTable.HeadDot.Position = Vector2.new(Vector.X, Vector.Y)
             end
 
-            if OnScreen == true then
+            if OnScreen then
                 if Environment.Visuals.HeadDotSettings.Enabled then
                     if Environment.Settings.TeamCheck and Player.TeamColor ~= LocalPlayer.TeamColor then
                         PlayerTable.HeadDot.Visible = true
@@ -457,7 +457,7 @@ local function AddHeadDot(Player)
                         Player.HeadDot.Visible = true
                     end
 
-                    if PlayerTable.HeadDot.Visible == true then
+                    if PlayerTable.HeadDot.Visible then
                         UpdateHeadDot()
                     end
                 end
@@ -482,7 +482,7 @@ local function AddCrosshair()
         Environment.Crosshair.Parts.Y.Thickness = Environment.Crosshair.CrosshairSettings.Thickness
         Environment.Crosshair.Parts.Y.Transparency = Environment.Crosshair.CrosshairSettings.Transparency
 
-        if Environment.Settings.Enabled == true then
+        if Environment.Settings.Enabled then
             Environment.Crosshair.Parts.X.Visible = Environment.Crosshair.CrosshairSettings.Enabled
             Environment.Crosshair.Parts.Y.Visible = Environment.Crosshair.CrosshairSettings.Enabled
         else
@@ -692,17 +692,13 @@ end
 
 --// Reload On Teleport
 
-if Environment.Settings.ReloadOnTeleport == true then
+if Environment.Settings.ReloadOnTeleport then
     if syn.queue_on_teleport then
         syn.queue_on_teleport(game:HttpGet("https://pastebin.com/raw/uqb2dYE9"))
     else
         SendNotification(Title, "Your exploit does not support \"syn.queue_on_teleport()\"")
     end
 end
-
---// Main
-
-Load(); SendNotification(Title, "Visuals script successfully loaded! Check the GitHub page on how to configure the script.", 5)
 
 --// Script Functions
 
@@ -840,3 +836,7 @@ function Environment.Functions:ResetSettings()
 
     Load()
 end
+
+--// Main
+
+Load(); SendNotification(Title, "Visuals script successfully loaded! Check the GitHub page on how to configure the script.", 5)
