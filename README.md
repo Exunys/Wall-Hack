@@ -102,6 +102,7 @@ getgenv().WallHack.Crosshair = {
 
 getgenv().WallHack.Settings = {
     SendNotifications = true,
+    Debug = true, -- Prints any errors / Informs if your exploit is supported
     SaveSettings = true, -- Re-execute upon changing
     ReloadOnTeleport = true,
     Enabled = true,
@@ -142,6 +143,8 @@ If the script is not running upon execution, try a few of the solutions below:
 If none of these solutions work, check if your exploit is supported (read the **Notices** part). If the script still doesn't work, contact Exunys & report the problem you are experiencing in detail.
 
 Check if your exploit is supported [here](https://github.com/Exunys/Wall-Hack/blob/main/Resources/Scripts/Support%20Checker.lua).
+
+Make sure you have `Debug` enabled in `getgenv().WallHack.Settings.Debug`. It should be set to `true` by default but incase it isn't, set it to `true`. This will print out incase your exploit does not support the script, any incoming errors and etc. If the script fails to run it should print out (in yellow text) `ED_WH_ERROR: Your Error Message Here`. Incase theres a unique (not repeated and useless) error which completely breaks the script and prevents it from running, please screenshot that error, find Exunys' contact information and send them the screenshot. The bug would probably be fixed as soon as possible.
 ## Functions
 This script includes built-in functions to control the Wall Hack.
 The functions can be accessed by indexing **Functions** in the Environment. Example:
