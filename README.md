@@ -6,7 +6,7 @@ This script is also undetected because it uses [Synapse X's Drawing Library](htt
 [27/2/2022]
 - Fixed Alive & Team Check
 - Optimized Source Even More
-- Replaced Crosshair with new [Crosshair V2](https://github.com/Exunys/Crosshair-V2)
+- Replaced [Crosshair](https://github.com/Exunys/Crosshair-Script) with new [Crosshair V2](https://github.com/Exunys/Crosshair-V2)
 - Fixed some other minor bugs
 ### License
 This project is completely free and open sourced. But, that does not mean you own rights to it. Read this [document](https://github.com/Exunys/Wall-Hack/blob/main/LICENSE) for more information.
