@@ -1,8 +1,14 @@
 {
+  "GapSize": 5,
   "Enabled": true,
   "Thickness": 1,
   "Type": 1,
-  "Color": "255, 255, 255",
+  "CenterDotFilled": true,
+  "Color": "0, 255, 0",
+  "CenterDotSize": 1,
+  "CenterDotColor": "0, 255, 0",
   "Transparency": 1,
-  "Size": 20
+  "CenterDotTransparency": 1,
+  "CenterDot": false,
+  "Size": 12
 }
