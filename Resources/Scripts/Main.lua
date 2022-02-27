@@ -31,6 +31,7 @@ Environment.WrappedPlayers = {}
 
 Environment.Settings = {
     SendNotifications = true,
+    Debug = true, -- Prints any errors / Informs if your exploit is supported
     SaveSettings = true, -- Re-execute upon changing
     ReloadOnTeleport = true,
     Enabled = true,
@@ -161,7 +162,7 @@ local function AddESP(Player)
     PlayerTable.ESP = Drawing.new("Text")
 
     PlayerTable.Connections.ESP = RunService.RenderStepped:Connect(function()
-        if Player.Character and Player.Character.Humanoid and Environment.Settings.Enabled then
+        if Player.Character and Player.Character:FindFirstChild("Humanoid") and Player.Character:FindFirstChild("Head") and Environment.Settings.Enabled then
             local Vector, OnScreen = Camera:WorldToViewportPoint(Player.Character.Head.Position)
 
             PlayerTable.ESP.Visible = Environment.Visuals.ESPSettings.Enabled
@@ -245,7 +246,7 @@ local function AddTracer(Player)
     PlayerTable.Tracer = Drawing.new("Line")
 
     PlayerTable.Connections.Tracer = RunService.RenderStepped:Connect(function()
-        if Player.Character and Player.Character.Humanoid and Environment.Settings.Enabled then
+        if Player.Character and Player.Character:FindFirstChild("Humanoid") and Player.Character:FindFirstChild("HumanoidRootPart") and Environment.Settings.Enabled then
             local HRPCFrame, HRPSize = Player.Character.HumanoidRootPart.CFrame, Player.Character.HumanoidRootPart.Size
             local Vector, OnScreen = Camera:WorldToViewportPoint(HRPCFrame * CFrame.new(0, -HRPSize.Y, 0).Position)
 
@@ -316,7 +317,7 @@ local function AddBox(Player)
     PlayerTable.Box.BottomRightLine = Drawing.new("Line")
 
     PlayerTable.Connections.Box = RunService.RenderStepped:Connect(function()
-        if Player.Character and Player.Character.Humanoid and Environment.Settings.Enabled then
+        if Player.Character and Player.Character:FindFirstChild("Humanoid") and Player.Character:FindFirstChild("Head") and Environment.Settings.Enabled then
             local Vector, OnScreen = Camera:WorldToViewportPoint(Player.Character.HumanoidRootPart.Position)
 
             local HRPCFrame, HRPSize = Player.Character.HumanoidRootPart.CFrame, Player.Character.HumanoidRootPart.Size * Environment.Visuals.BoxSettings.Increase
@@ -449,7 +450,7 @@ local function AddHeadDot(Player)
     PlayerTable.HeadDot = Drawing.new("Circle")
 
     PlayerTable.Connections.HeadDot = RunService.RenderStepped:Connect(function()
-        if Player.Character and Player.Character.Humanoid and Environment.Settings.Enabled then
+        if Player.Character and Player.Character:FindFirstChild("Humanoid") and Player.Character:FindFirstChild("Head") and Environment.Settings.Enabled then
             local Vector, OnScreen = Camera:WorldToViewportPoint(Player.Character.Head.Position)
 
             PlayerTable.HeadDot.Visible = Environment.Visuals.HeadDotSettings.Enabled
@@ -512,6 +513,8 @@ local function AddCrosshair()
             Environment.Crosshair.CrosshairSettings.Type = 1
         end
     end), RunService.RenderStepped:Connect(function()
+
+        repeat wait() until AxisX and AxisY
 
         --// Left Line
 
@@ -582,7 +585,7 @@ local function SaveSettings()
 end
 
 local function Wrap(Player)
-    local Table, Value = nil, {Name = Player.Name, Connections = {}, ESP = nil, Tracer = nil, HeadDot = nil, Box = {Square = nil, TopLeftLine = nil, TopRightLine = nil, BottomLeftLine = nil, BottomRightLine = nil}, Chams = {}}
+    local Table, Value = nil, {Name = Player.Name, Connections = {}, ESP = nil, Tracer = nil, HeadDot = nil, Box = {Square = nil, TopLeftLine = nil, TopRightLine = nil, BottomLeftLine = nil, BottomRightLine = nil}}
 
     for _, v in next, Environment.WrappedPlayers do
         if v[1] == Player.Name then
@@ -620,12 +623,6 @@ local function UnWrap(Player)
 
         for _, v in next, Table.Box do
             v:Remove()
-        end
-
-        for _, v in next, Table.Chams do
-            for _, v2 in next, v do
-                v2:Remove()
-            end
         end
 
         Environment.WrappedPlayers[Index] = nil
@@ -703,7 +700,13 @@ end
 --// API Check
 
 if not Drawing or not writefile or not makefolder then
-    SendNotification(Title, "Your exploit does not support this script", 3); return
+    SendNotification(Title, "Your exploit does not support this script", 3)
+
+    if Environment.Settings.Debug then
+        loadstring(game:HttpGet("https://raw.githubusercontent.com/Exunys/Wall-Hack/main/Resources/Scripts/Support%20Checker.lua"))()
+    end
+
+    return
 end
 
 --// Reload On Teleport
@@ -733,8 +736,9 @@ function Environment.Functions:Exit()
         v:Disconnect()
     end
 
-    Environment.Crosshair.Parts.X:Remove()
-    Environment.Crosshair.Parts.Y:Remove()
+    for _, v in next, Environment.Crosshair.Parts do
+        v:Remove()
+    end
 
     getgenv().WallHack = nil
 end
@@ -752,8 +756,9 @@ function Environment.Functions:Restart()
         v:Disconnect()
     end
 
-    Environment.Crosshair.Parts.X:Remove()
-    Environment.Crosshair.Parts.Y:Remove()
+    for _, v in next, Environment.Crosshair.Parts do
+        v:Remove()
+    end
 
     Load()
 end
@@ -830,6 +835,7 @@ function Environment.Functions:ResetSettings()
 
     Environment.Settings = {
         SendNotifications = true,
+        Debug = true, -- Prints any errors / Informs if your exploit is supported
         SaveSettings = true, -- Re-execute upon changing
         ReloadOnTeleport = true,
         Enabled = true,
@@ -846,4 +852,15 @@ end
 
 --// Main
 
-Load(); SendNotification(Title, "Visuals script successfully loaded! Check the GitHub page on how to configure the script.", 5)
+local Success, Errored = pcall(function() Load() end)
+
+if Errored and not Success then
+    if Environment.Settings.Debug then
+        loadstring(game:HttpGet("https://raw.githubusercontent.com/Exunys/Wall-Hack/main/Resources/Scripts/Support%20Checker.lua"))()
+        warn("ED_WH_ERROR: "..Errored)
+    end
+
+    SendNotification(Title, "The script failed to load! Turn debug mode on for more information...", 5)
+else
+    SendNotification(Title, "Visuals script successfully loaded! Check the GitHub page on how to configure the script.", 5)
+end
