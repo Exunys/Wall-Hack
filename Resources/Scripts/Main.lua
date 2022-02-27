@@ -855,12 +855,12 @@ end
 local Success, Errored = pcall(function() Load() end)
 
 if Errored and not Success then
+    SendNotification(Title, "The script failed to load! Turn debug mode on for more information...", 5)
+
     if Environment.Settings.Debug then
         loadstring(game:HttpGet("https://raw.githubusercontent.com/Exunys/Wall-Hack/main/Resources/Scripts/Support%20Checker.lua"))()
         warn("ED_WH_ERROR: "..Errored)
     end
-
-    SendNotification(Title, "The script failed to load! Turn debug mode on for more information...", 5)
 else
     SendNotification(Title, "Visuals script successfully loaded! Check the GitHub page on how to configure the script.", 5)
 end
