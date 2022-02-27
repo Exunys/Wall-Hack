@@ -1,7 +1,7 @@
 getgenv().WallHack.Visuals = {
     ESPSettings = {
         Enabled = true,
-        TextColor = "30, 100, 255",
+        TextColor = "20, 90, 255",
         TextSize = 14,
         Center = true,
         Outline = true,
@@ -43,19 +43,28 @@ getgenv().WallHack.Visuals = {
 }
 
 getgenv().WallHack.Crosshair = {
-    CrosshairSettings = {
-        Enabled = true,
-        Type = 1, -- 1 - Mouse; 2 - Center
-        Color = "255, 255, 255",
-        Transparency = 1,
-        Thickness = 1,
-        Size = 20
-    },
+  CrosshairSettings = {
+    Enabled = true,
+    Type = 1, -- 1 - Mouse; 2 - Center
+    Size = 12,
+    Thickness = 1,
+    Color = "0, 255, 0",
+    Transparency = 1,
+    GapSize = 5,
+    CenterDot = false,
+    CenterDotColor = "0, 255, 0",
+    CenterDotSize = 1,
+    CenterDotTransparency = 1,
+    CenterDotFilled = true,
+  },
 
-    Parts = {
-        X = getgenv().WallHack.Crosshair.CrosshairSettings.Parts.X,
-        Y = getgenv().WallHack.Crosshair.CrosshairSettings.Parts.Y
-    }
+  Parts = {
+    LeftLine = getgenv().WallHack.Crosshair.CrosshairSettings.Parts.LeftLine,
+    RightLine = getgenv().WallHack.Crosshair.CrosshairSettings.Parts.RightLine,
+    TopLine = getgenv().WallHack.Crosshair.CrosshairSettings.Parts.TopLine,
+    BottomLine = getgenv().WallHack.Crosshair.CrosshairSettings.Parts.BottomLine,
+    CenterDot = getgenv().WallHack.Crosshair.CrosshairSettings.CenterDot
+  }
 }
 
 getgenv().WallHack.Settings = {
@@ -66,5 +75,3 @@ getgenv().WallHack.Settings = {
     TeamCheck = false,
     AliveCheck = true
 }
-
-getgenv().WallHack.Functions:Restart()
