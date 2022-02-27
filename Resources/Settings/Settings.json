@@ -1,5 +1,6 @@
 {
   "Enabled": true,
+  "Debug": true,
   "SendNotifications": true,
   "SaveSettings": true,
   "ReloadOnTeleport": true,
