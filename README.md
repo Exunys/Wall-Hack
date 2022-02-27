@@ -7,6 +7,7 @@ This script is also undetected because it uses [Synapse X's Drawing Library](htt
 - Fixed Alive & Team Check
 - Optimized Source Even More
 - Replaced [Crosshair](https://github.com/Exunys/Crosshair-Script) with new [Crosshair V2](https://github.com/Exunys/Crosshair-V2)
+- Added Debug mode setting (Read about it below at the Solutions section of this document)
 - Fixed some other minor bugs
 ### License
 This project is completely free and open sourced. But, that does not mean you own rights to it. Read this [document](https://github.com/Exunys/Wall-Hack/blob/main/LICENSE) for more information.
@@ -144,7 +145,7 @@ If none of these solutions work, check if your exploit is supported (read the **
 
 Check if your exploit is supported [here](https://github.com/Exunys/Wall-Hack/blob/main/Resources/Scripts/Support%20Checker.lua).
 
-Make sure you have `Debug` enabled in `getgenv().WallHack.Settings.Debug`. It should be set to `true` by default but incase it isn't, set it to `true`. This will print out incase your exploit does not support the script, any incoming errors and etc. If the script fails to run it should print out (in yellow text) `ED_WH_ERROR: Your Error Message Here`. Incase theres a unique (not repeated and useless) error which completely breaks the script and prevents it from running, please screenshot that error, find Exunys' contact information and send them the screenshot. The bug would probably be fixed as soon as possible.
+Make sure you have `Debug` enabled in `getgenv().WallHack.Settings.Debug`. It should be set to `true` by default but incase it isn't, set it to `true`. This will print out incase your exploit does not support the script, any incoming errors and etc. If the script fails to run it should print out (in yellow text) `ED_WH_ERROR: Your Error Message Here`. Incase theres a unique (not repeated and meaningless) error which completely breaks the script and prevents it from running, please screenshot that error, find Exunys' contact information and send them the screenshot. The bug would probably be fixed as soon as possible.
 ## Functions
 This script includes built-in functions to control the Wall Hack.
 The functions can be accessed by indexing **Functions** in the Environment. Example:
