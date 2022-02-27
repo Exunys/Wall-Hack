@@ -22,8 +22,8 @@ local Camera = game:GetService("Workspace").CurrentCamera
 
 local LocalPlayer = Players.LocalPlayer
 local Title = "Exunys Developer"
-local FileNames = {"Wall Hack", "Settings.json", "Visuals.json", "Crosshair.json"}
-local ServiceConnections = {PlayerAddedConnection = nil, PlayerRemovingConnection = nil, CrosshairConnection = nil}
+local FileNames = {"Wall Hack", "Configuration.json", "Visuals.json", "Crosshair.json"}
+local ServiceConnections = {}
 
 --// Script Settings
 
@@ -39,14 +39,6 @@ Environment.Settings = {
 }
 
 --// Wall Hack
-
-local function GetColor(Color)
-    local R = tonumber(string.match(Color, "([%d]+)[%s]*,[%s]*[%d]+[%s]*,[%s]*[%d]+"))
-    local G = tonumber(string.match(Color, "[%d]+[%s]*,[%s]*([%d]+)[%s]*,[%s]*[%d]+"))
-    local B = tonumber(string.match(Color, "[%d]+[%s]*,[%s]*[%d]+[%s]*,[%s]*([%d]+)"))
-
-    return Color3.fromRGB(R, G, B)
-end
 
 Environment.Visuals = {
     ESPSettings = {
@@ -96,30 +88,79 @@ Environment.Crosshair = {
     CrosshairSettings = {
         Enabled = true,
         Type = 1, -- 1 - Mouse; 2 - Center
-        Color = "255, 255, 255",
-        Transparency = 1,
+        Size = 12,
         Thickness = 1,
-        Size = 20
+        Color = "0, 255, 0",
+        Transparency = 1,
+        GapSize = 5,
+        CenterDot = false,
+        CenterDotColor = "0, 255, 0",
+        CenterDotSize = 1,
+        CenterDotTransparency = 1,
+        CenterDotFilled = true,
     },
 
     Parts = {
-        X = Drawing.new("Line"),
-        Y = Drawing.new("Line")
+        LeftLine = Drawing.new("Line"),
+        RightLine = Drawing.new("Line"),
+        TopLine = Drawing.new("Line"),
+        BottomLine = Drawing.new("Line"),
+        CenterDot = Drawing.new("Circle")
     }
 }
 
-local function AddESP(Player)
-    local PlayerTable = nil
+--// Core Functions
 
+local function Encode(Table)
+    if Table and type(Table) == "table" then
+        local EncodedTable = HttpService:JSONEncode(Table)
+
+        return EncodedTable
+    end
+end
+
+local function Decode(String)
+    if String and type(String) == "string" then
+        local DecodedTable = HttpService:JSONDecode(String)
+
+        return DecodedTable
+    end
+end
+
+local function SendNotification(TitleArg, DescriptionArg, DurationArg)
+    if Environment.Settings.SendNotifications then
+        StarterGui:SetCore("SendNotification", {
+            Title = TitleArg,
+            Text = DescriptionArg,
+            Duration = DurationArg
+        })
+    end
+end
+
+local function GetColor(Color)
+    local R = tonumber(string.match(Color, "([%d]+)[%s]*,[%s]*[%d]+[%s]*,[%s]*[%d]+"))
+    local G = tonumber(string.match(Color, "[%d]+[%s]*,[%s]*([%d]+)[%s]*,[%s]*[%d]+"))
+    local B = tonumber(string.match(Color, "[%d]+[%s]*,[%s]*[%d]+[%s]*,[%s]*([%d]+)"))
+
+    return Color3.fromRGB(R, G, B)
+end
+
+local function GetPlayerTable(Player)
     for _, v in next, Environment.WrappedPlayers do
         if v.Name == Player.Name then
-            PlayerTable = v
+            return v
         end
     end
+end
+
+--// Visuals
+
+local function AddESP(Player)
+    local PlayerTable = GetPlayerTable(Player)
 
     PlayerTable.ESP = Drawing.new("Text")
 
-    PlayerTable.Connections.ESP = nil; PlayerTable.Connections.ESP = RunService.RenderStepped:Connect(function()
+    PlayerTable.Connections.ESP = RunService.RenderStepped:Connect(function()
         if Player.Character and Player.Character.Humanoid and Environment.Settings.Enabled then
             local Vector, OnScreen = Camera:WorldToViewportPoint(Player.Character.Head.Position)
 
@@ -165,20 +206,24 @@ local function AddESP(Player)
 
             if OnScreen then
                 if Environment.Visuals.ESPSettings.Enabled then
-                    if Environment.Settings.TeamCheck and Player.TeamColor ~= LocalPlayer.TeamColor then
-                        PlayerTable.ESP.Visible = true
-                    elseif Environment.Settings.TeamCheck and Player.TeamColor == LocalPlayer.TeamColor then
-                        PlayerTable.ESP.Visible = false
-                    elseif not Environment.Settings.TeamCheck then
-                        PlayerTable.ESP.Visible = true
+                    local Checks = {Alive = true, Team = true}
+
+                    if Environment.Settings.AliveCheck then
+                        Checks.Alive = (Player.Character:FindFirstChild("Humanoid").Health > 0)
+                    else
+                        Checks.Alive = true
                     end
 
-                    if Environment.Settings.AliveCheck and Player.Character.Humanoid.Health > 0 then
+                    if Environment.Settings.TeamCheck then
+                        Checks.Team = (Player.TeamColor ~= LocalPlayer.TeamColor)
+                    else
+                        Checks.Team = true
+                    end
+
+                    if Checks.Alive and Checks.Team then
                         PlayerTable.ESP.Visible = true
-                    elseif Environment.Settings.AliveCheck and Player.Character.Humanoid.Health <= 0 then
+                    else
                         PlayerTable.ESP.Visible = false
-                    elseif not Environment.Settings.AliveCheck then
-                        Player.ESP.Visible = true
                     end
 
                     if PlayerTable.ESP.Visible then
@@ -195,17 +240,11 @@ local function AddESP(Player)
 end
 
 local function AddTracer(Player)
-    local PlayerTable = nil
-
-    for _, v in next, Environment.WrappedPlayers do
-        if v.Name == Player.Name then
-            PlayerTable = v
-        end
-    end
+    local PlayerTable = GetPlayerTable(Player)
 
     PlayerTable.Tracer = Drawing.new("Line")
 
-    PlayerTable.Connections.Tracer = nil; PlayerTable.Connections.Tracer = RunService.RenderStepped:Connect(function()
+    PlayerTable.Connections.Tracer = RunService.RenderStepped:Connect(function()
         if Player.Character and Player.Character.Humanoid and Environment.Settings.Enabled then
             local HRPCFrame, HRPSize = Player.Character.HumanoidRootPart.CFrame, Player.Character.HumanoidRootPart.Size
             local Vector, OnScreen = Camera:WorldToViewportPoint(HRPCFrame * CFrame.new(0, -HRPSize.Y, 0).Position)
@@ -232,20 +271,24 @@ local function AddTracer(Player)
 
             if OnScreen then
                 if Environment.Visuals.TracersSettings.Enabled then
-                    if Environment.Settings.TeamCheck and Player.TeamColor ~= LocalPlayer.TeamColor then
-                        PlayerTable.Tracer.Visible = true
-                    elseif Environment.Settings.TeamCheck and Player.TeamColor == LocalPlayer.TeamColor then
-                        PlayerTable.Tracer.Visible = false
-                    elseif not Environment.Settings.TeamCheck then
-                        PlayerTable.Tracer.Visible = true
+                    local Checks = {Alive = true, Team = true}
+
+                    if Environment.Settings.AliveCheck then
+                        Checks.Alive = (Player.Character:FindFirstChild("Humanoid").Health > 0)
+                    else
+                        Checks.Alive = true
                     end
 
-                    if Environment.Settings.AliveCheck and Player.Character.Humanoid.Health > 0 then
+                    if Environment.Settings.TeamCheck then
+                        Checks.Team = (Player.TeamColor ~= LocalPlayer.TeamColor)
+                    else
+                        Checks.Team = true
+                    end
+
+                    if Checks.Alive and Checks.Team then
                         PlayerTable.Tracer.Visible = true
-                    elseif Environment.Settings.AliveCheck and Player.Character.Humanoid.Health <= 0 then
+                    else
                         PlayerTable.Tracer.Visible = false
-                    elseif not Environment.Settings.AliveCheck then
-                        Player.Tracer.Visible = true
                     end
 
                     if PlayerTable.Tracer.Visible then
@@ -262,13 +305,7 @@ local function AddTracer(Player)
 end
 
 local function AddBox(Player)
-    local PlayerTable = nil
-
-    for _, v in next, Environment.WrappedPlayers do
-        if v.Name == Player.Name then
-            PlayerTable = v
-        end
-    end
+    local PlayerTable = GetPlayerTable(Player)
 
     PlayerTable.Box.Square = Drawing.new("Square")
 
@@ -278,7 +315,7 @@ local function AddBox(Player)
     PlayerTable.Box.BottomLeftLine = Drawing.new("Line")
     PlayerTable.Box.BottomRightLine = Drawing.new("Line")
 
-    PlayerTable.Connections.Box = nil; PlayerTable.Connections.Box = RunService.RenderStepped:Connect(function()
+    PlayerTable.Connections.Box = RunService.RenderStepped:Connect(function()
         if Player.Character and Player.Character.Humanoid and Environment.Settings.Enabled then
             local Vector, OnScreen = Camera:WorldToViewportPoint(Player.Character.HumanoidRootPart.Position)
 
@@ -311,21 +348,12 @@ local function AddBox(Player)
             end
 
             local function Visibility2(Bool)
-                if Environment.Visuals.BoxSettings.Type == 1 then
-                    PlayerTable.Box.Square.Visible = Bool
+                PlayerTable.Box.Square.Visible = Bool
 
-                    PlayerTable.Box.TopLeftLine.Visible = Bool
-                    PlayerTable.Box.TopRightLine.Visible = Bool
-                    PlayerTable.Box.BottomLeftLine.Visible = Bool
-                    PlayerTable.Box.BottomRightLine.Visible = Bool
-                elseif Environment.Visuals.BoxSettings.Type == 2 then
-                    PlayerTable.Box.Square.Visible = Bool
-
-                    PlayerTable.Box.TopLeftLine.Visible = Bool
-                    PlayerTable.Box.TopRightLine.Visible = Bool
-                    PlayerTable.Box.BottomLeftLine.Visible = Bool
-                    PlayerTable.Box.BottomRightLine.Visible = Bool
-                end
+                PlayerTable.Box.TopLeftLine.Visible = Bool
+                PlayerTable.Box.TopRightLine.Visible = Bool
+                PlayerTable.Box.BottomLeftLine.Visible = Bool
+                PlayerTable.Box.BottomRightLine.Visible = Bool
             end
 
             Visibility(Environment.Visuals.BoxSettings.Enabled)
@@ -372,20 +400,24 @@ local function AddBox(Player)
 
             if OnScreen then
                 if Environment.Visuals.BoxSettings.Enabled then
-                    if Environment.Settings.TeamCheck and Player.TeamColor ~= LocalPlayer.TeamColor then
-                        Visibility(true)
-                    elseif Environment.Settings.TeamCheck and Player.TeamColor == LocalPlayer.TeamColor then
-                        Visibility2(false)
-                    elseif not Environment.Settings.TeamCheck then
-                        Visibility(true)
+                    local Checks = {Alive = true, Team = true}
+
+                    if Environment.Settings.AliveCheck then
+                        Checks.Alive = (Player.Character:FindFirstChild("Humanoid").Health > 0)
+                    else
+                        Checks.Alive = true
                     end
 
-                    if Environment.Settings.AliveCheck and Player.Character.Humanoid.Health > 0 then
+                    if Environment.Settings.TeamCheck then
+                        Checks.Team = (Player.TeamColor ~= LocalPlayer.TeamColor)
+                    else
+                        Checks.Team = true
+                    end
+
+                    if Checks.Alive and Checks.Team then
                         Visibility(true)
-                    elseif Environment.Settings.AliveCheck and Player.Character.Humanoid.Health <= 0 then
+                    else
                         Visibility2(false)
-                    elseif not Environment.Settings.AliveCheck then
-                        Visibility(true)
                     end
 
                     if PlayerTable.Box.Square.Visible and not PlayerTable.Box.TopLeftLine.Visible and not PlayerTable.Box.TopRightLine.Visible and not PlayerTable.Box.BottomLeftLine.Visible and not PlayerTable.Box.BottomRightLine.Visible then
@@ -412,17 +444,11 @@ local function AddBox(Player)
 end
 
 local function AddHeadDot(Player)
-    local PlayerTable = nil
-
-    for _, v in next, Environment.WrappedPlayers do
-        if v.Name == Player.Name then
-            PlayerTable = v
-        end
-    end
+    local PlayerTable = GetPlayerTable(Player)
 
     PlayerTable.HeadDot = Drawing.new("Circle")
 
-    PlayerTable.Connections.HeadDot = nil; PlayerTable.Connections.HeadDot = RunService.RenderStepped:Connect(function()
+    PlayerTable.Connections.HeadDot = RunService.RenderStepped:Connect(function()
         if Player.Character and Player.Character.Humanoid and Environment.Settings.Enabled then
             local Vector, OnScreen = Camera:WorldToViewportPoint(Player.Character.Head.Position)
 
@@ -441,20 +467,24 @@ local function AddHeadDot(Player)
 
             if OnScreen then
                 if Environment.Visuals.HeadDotSettings.Enabled then
-                    if Environment.Settings.TeamCheck and Player.TeamColor ~= LocalPlayer.TeamColor then
-                        PlayerTable.HeadDot.Visible = true
-                    elseif Environment.Settings.TeamCheck and Player.TeamColor == LocalPlayer.TeamColor then
-                        PlayerTable.HeadDot.Visible = false
-                    elseif not Environment.Settings.TeamCheck then
-                        PlayerTable.HeadDot.Visible = true
+                    local Checks = {Alive = true, Team = true}
+
+                    if Environment.Settings.AliveCheck then
+                        Checks.Alive = (Player.Character:FindFirstChild("Humanoid").Health > 0)
+                    else
+                        Checks.Alive = true
                     end
 
-                    if Environment.Settings.AliveCheck and Player.Character.Humanoid.Health > 0 then
+                    if Environment.Settings.TeamCheck then
+                        Checks.Team = (Player.TeamColor ~= LocalPlayer.TeamColor)
+                    else
+                        Checks.Team = true
+                    end
+
+                    if Checks.Alive and Checks.Team then
                         PlayerTable.HeadDot.Visible = true
-                    elseif Environment.Settings.AliveCheck and Player.Character.Humanoid.Health <= 0 then
+                    else
                         PlayerTable.HeadDot.Visible = false
-                    elseif not Environment.Settings.AliveCheck then
-                        Player.HeadDot.Visible = true
                     end
 
                     if PlayerTable.HeadDot.Visible then
@@ -471,60 +501,71 @@ local function AddHeadDot(Player)
 end
 
 local function AddCrosshair()
-    ServiceConnections.CrosshairConnection = RunService.RenderStepped:Connect(function()
-        local RealSize = Environment.Crosshair.CrosshairSettings.Size / 2
+    local AxisX, AxisY = nil, nil
 
-        Environment.Crosshair.Parts.X.Color = GetColor(Environment.Crosshair.CrosshairSettings.Color)
-        Environment.Crosshair.Parts.X.Thickness = Environment.Crosshair.CrosshairSettings.Thickness
-        Environment.Crosshair.Parts.X.Transparency = Environment.Crosshair.CrosshairSettings.Transparency
-
-        Environment.Crosshair.Parts.Y.Color = GetColor(Environment.Crosshair.CrosshairSettings.Color)
-        Environment.Crosshair.Parts.Y.Thickness = Environment.Crosshair.CrosshairSettings.Thickness
-        Environment.Crosshair.Parts.Y.Transparency = Environment.Crosshair.CrosshairSettings.Transparency
-
-        if Environment.Settings.Enabled then
-            Environment.Crosshair.Parts.X.Visible = Environment.Crosshair.CrosshairSettings.Enabled
-            Environment.Crosshair.Parts.Y.Visible = Environment.Crosshair.CrosshairSettings.Enabled
-        else
-            Environment.Crosshair.Parts.X.Visible = false
-            Environment.Crosshair.Parts.Y.Visible = false
-        end
-
+    ServiceConnections.AxisConnection, ServiceConnections.CrosshairConnection = RunService.RenderStepped:Connect(function()
         if Environment.Crosshair.CrosshairSettings.Type == 1 then
-            Environment.Crosshair.Parts.X.From = Vector2.new(UserInputService:GetMouseLocation().X - RealSize, UserInputService:GetMouseLocation().Y)
-            Environment.Crosshair.Parts.X.To = Vector2.new(UserInputService:GetMouseLocation().X + RealSize, UserInputService:GetMouseLocation().Y)
-
-            Environment.Crosshair.Parts.Y.From = Vector2.new(UserInputService:GetMouseLocation().X, UserInputService:GetMouseLocation().Y - RealSize)
-            Environment.Crosshair.Parts.Y.To = Vector2.new(UserInputService:GetMouseLocation().X, UserInputService:GetMouseLocation().Y + RealSize)
+            AxisX, AxisY = UserInputService:GetMouseLocation().X, UserInputService:GetMouseLocation().Y
         elseif Environment.Crosshair.CrosshairSettings.Type == 2 then
-            Environment.Crosshair.Parts.X.From = Vector2.new((Camera.ViewportSize.X / 2) - RealSize, (Camera.ViewportSize.Y / 2))
-            Environment.Crosshair.Parts.X.To = Vector2.new((Camera.ViewportSize.X / 2) + RealSize, (Camera.ViewportSize.Y / 2))
-
-            Environment.Crosshair.Parts.Y.From = Vector2.new((Camera.ViewportSize.X / 2), (Camera.ViewportSize.Y / 2) - RealSize)
-            Environment.Crosshair.Parts.Y.To = Vector2.new((Camera.ViewportSize.X / 2), (Camera.ViewportSize.Y / 2) + RealSize)
+            AxisX, AxisY = Camera.ViewportSize.X / 2, Camera.ViewportSize.Y / 2
         else
             Environment.Crosshair.CrosshairSettings.Type = 1
         end
+    end), RunService.RenderStepped:Connect(function()
+
+        --// Left Line
+
+        Environment.Crosshair.Parts.LeftLine.Visible = Environment.Settings.Enabled
+        Environment.Crosshair.Parts.LeftLine.Color = GetColor(Environment.Crosshair.CrosshairSettings.Color)
+        Environment.Crosshair.Parts.LeftLine.Thickness = Environment.Crosshair.CrosshairSettings.Thickness
+        Environment.Crosshair.Parts.LeftLine.Transparency = Environment.Crosshair.CrosshairSettings.Transparency
+
+        Environment.Crosshair.Parts.LeftLine.From = Vector2.new(AxisX + Environment.Crosshair.CrosshairSettings.GapSize, AxisY)
+        Environment.Crosshair.Parts.LeftLine.To = Vector2.new(AxisX + Environment.Crosshair.CrosshairSettings.Size, AxisY)
+
+        --// Right Line
+
+        Environment.Crosshair.Parts.RightLine.Visible = Environment.Settings.Enabled
+        Environment.Crosshair.Parts.RightLine.Color = GetColor(Environment.Crosshair.CrosshairSettings.Color)
+        Environment.Crosshair.Parts.RightLine.Thickness = Environment.Crosshair.CrosshairSettings.Thickness
+        Environment.Crosshair.Parts.RightLine.Transparency = Environment.Crosshair.CrosshairSettings.Transparency
+
+        Environment.Crosshair.Parts.RightLine.From = Vector2.new(AxisX - Environment.Crosshair.CrosshairSettings.GapSize, AxisY)
+        Environment.Crosshair.Parts.RightLine.To = Vector2.new(AxisX - Environment.Crosshair.CrosshairSettings.Size, AxisY)
+
+        --// Top Line
+
+        Environment.Crosshair.Parts.TopLine.Visible = Environment.Settings.Enabled
+        Environment.Crosshair.Parts.TopLine.Color = GetColor(Environment.Crosshair.CrosshairSettings.Color)
+        Environment.Crosshair.Parts.TopLine.Thickness = Environment.Crosshair.CrosshairSettings.Thickness
+        Environment.Crosshair.Parts.TopLine.Transparency = Environment.Crosshair.CrosshairSettings.Transparency
+
+        Environment.Crosshair.Parts.TopLine.From = Vector2.new(AxisX, AxisY + Environment.Crosshair.CrosshairSettings.GapSize)
+        Environment.Crosshair.Parts.TopLine.To = Vector2.new(AxisX, AxisY + Environment.Crosshair.CrosshairSettings.Size)
+
+        --// Bottom Line
+
+        Environment.Crosshair.Parts.BottomLine.Visible = Environment.Settings.Enabled
+        Environment.Crosshair.Parts.BottomLine.Color = GetColor(Environment.Crosshair.CrosshairSettings.Color)
+        Environment.Crosshair.Parts.BottomLine.Thickness = Environment.Crosshair.CrosshairSettings.Thickness
+        Environment.Crosshair.Parts.BottomLine.Transparency = Environment.Crosshair.CrosshairSettings.Transparency
+
+        Environment.Crosshair.Parts.BottomLine.From = Vector2.new(AxisX, AxisY - Environment.Crosshair.CrosshairSettings.GapSize)
+        Environment.Crosshair.Parts.BottomLine.To = Vector2.new(AxisX, AxisY - Environment.Crosshair.CrosshairSettings.Size)
+
+        --// Center Dot
+
+        Environment.Crosshair.Parts.CenterDot.Visible = Environment.Settings.Enabled and Environment.Crosshair.CrosshairSettings.CenterDot
+        Environment.Crosshair.Parts.CenterDot.Color = GetColor(Environment.Crosshair.CrosshairSettings.CenterDotColor)
+        Environment.Crosshair.Parts.CenterDot.Radius = Environment.Crosshair.CrosshairSettings.CenterDotSize
+        Environment.Crosshair.Parts.CenterDot.Transparency = Environment.Crosshair.CrosshairSettings.CenterDotTransparency
+        Environment.Crosshair.Parts.CenterDot.Filled = Environment.Crosshair.CrosshairSettings.CenterDotFilled
+
+        Environment.Crosshair.Parts.CenterDot.Position = Vector2.new(AxisX, AxisY)
     end)
 end
 
 --// Functions
-
-local function Encode(Table)
-    if Table and type(Table) == "table" then
-        local EncodedTable = HttpService:JSONEncode(Table)
-
-        return EncodedTable
-    end
-end
-
-local function Decode(String)
-    if String and type(String) == "string" then
-        local DecodedTable = HttpService:JSONDecode(String)
-
-        return DecodedTable
-    end
-end
 
 local function SaveSettings()
     if isfile(Title.."/"..FileNames[1].."/"..FileNames[2]) then
@@ -540,19 +581,8 @@ local function SaveSettings()
     end
 end
 
-local function SendNotification(TitleArg, DescriptionArg, DurationArg)
-    if Environment.Settings.SendNotifications then
-        StarterGui:SetCore("SendNotification", {
-            Title = TitleArg,
-            Text = DescriptionArg,
-            Duration = DurationArg
-        })
-    end
-end
-
 local function Wrap(Player)
-    local Value = {Name = Player.Name, Connections = {}, ESP = nil, Tracer = nil, HeadDot = nil, Box = {Square = nil, TopLeftLine = nil, TopRightLine = nil, BottomLeftLine = nil, BottomRightLine = nil}}
-    local Table = nil
+    local Table, Value = nil, {Name = Player.Name, Connections = {}, ESP = nil, Tracer = nil, HeadDot = nil, Box = {Square = nil, TopLeftLine = nil, TopRightLine = nil, BottomLeftLine = nil, BottomRightLine = nil}, Chams = {}}
 
     for _, v in next, Environment.WrappedPlayers do
         if v[1] == Player.Name then
@@ -588,11 +618,15 @@ local function UnWrap(Player)
         Table.Tracer:Remove()
         Table.HeadDot:Remove()
 
-        Table.Box.Square:Remove()
-        Table.Box.TopLeftLine:Remove()
-        Table.Box.TopRightLine:Remove()
-        Table.Box.BottomLeftLine:Remove()
-        Table.Box.BottomRightLine:Remove()
+        for _, v in next, Table.Box do
+            v:Remove()
+        end
+
+        for _, v in next, Table.Chams do
+            for _, v2 in next, v do
+                v2:Remove()
+            end
+        end
 
         Environment.WrappedPlayers[Index] = nil
     end
@@ -657,17 +691,7 @@ if Environment.Settings.SaveSettings then
 
     coroutine.wrap(function()
         while wait(10) do
-            if isfile(Title.."/"..FileNames[1].."/"..FileNames[2]) then
-                writefile(Title.."/"..FileNames[1].."/"..FileNames[2], Encode(Environment.Settings))
-            end
-
-            if isfile(Title.."/"..FileNames[1].."/"..FileNames[3]) then
-                writefile(Title.."/"..FileNames[1].."/"..FileNames[3], Encode(Environment.Visuals))
-            end
-
-            if isfile(Title.."/"..FileNames[1].."/"..FileNames[4]) then
-                writefile(Title.."/"..FileNames[1].."/"..FileNames[4], Encode(Environment.Crosshair.CrosshairSettings))
-            end
+            SaveSettings()
         end
     end)()
 else
@@ -678,15 +702,7 @@ end
 
 --// API Check
 
-if not Drawing then
-    SendNotification(Title, "Your exploit does not support this script", 3); return
-end
-
-if not writefile then
-    SendNotification(Title, "Your exploit does not support this script", 3); return
-end
-
-if not makefolder then
+if not Drawing or not writefile or not makefolder then
     SendNotification(Title, "Your exploit does not support this script", 3); return
 end
 
@@ -704,27 +720,6 @@ end
 
 Environment.Functions = {}
 
-function Environment.Functions:Restart()
-    SaveSettings()
-
-    for _, v in next, Players:GetPlayers() do
-        if v ~= LocalPlayer then
-            UnWrap(v)
-        end
-    end
-
-    for _, v in next, ServiceConnections do
-        v:Disconnect()
-    end
-
-    ServiceConnections.CrosshairConnection:Disconnect()
-
-    Environment.Crosshair.Parts.X:Remove()
-    Environment.Crosshair.Parts.Y:Remove()
-
-    Load()
-end
-
 function Environment.Functions:Exit()
     SaveSettings()
 
@@ -738,13 +733,29 @@ function Environment.Functions:Exit()
         v:Disconnect()
     end
 
-    ServiceConnections.CrosshairConnection:Disconnect()
+    Environment.Crosshair.Parts.X:Remove()
+    Environment.Crosshair.Parts.Y:Remove()
+
+    getgenv().WallHack = nil
+end
+
+function Environment.Functions:Restart()
+    SaveSettings()
+
+    for _, v in next, Players:GetPlayers() do
+        if v ~= LocalPlayer then
+            UnWrap(v)
+        end
+    end
+
+    for _, v in next, ServiceConnections do
+        v:Disconnect()
+    end
 
     Environment.Crosshair.Parts.X:Remove()
     Environment.Crosshair.Parts.Y:Remove()
 
-    getgenv().WallHack.Functions = nil
-    getgenv().WallHack = nil
+    Load()
 end
 
 function Environment.Functions:ResetSettings()
@@ -796,15 +807,24 @@ function Environment.Functions:ResetSettings()
         CrosshairSettings = {
             Enabled = true,
             Type = 1, -- 1 - Mouse; 2 - Center
-            Color = "255, 255, 255",
-            Transparency = 1,
+            Size = 12,
             Thickness = 1,
-            Size = 20
+            Color = "0, 255, 0",
+            Transparency = 1,
+            GapSize = 5,
+            CenterDot = false,
+            CenterDotColor = "0, 255, 0",
+            CenterDotSize = 1,
+            CenterDotTransparency = 1,
+            CenterDotFilled = true,
         },
 
         Parts = {
-            X = Environment.Crosshair.CrosshairSettings.Parts.X,
-            Y = Environment.Crosshair.CrosshairSettings.Parts.Y
+            LeftLine = Drawing.new("Line"),
+            RightLine = Drawing.new("Line"),
+            TopLine = Drawing.new("Line"),
+            BottomLine = Drawing.new("Line"),
+            CenterDot = Drawing.new("Circle")
         }
     }
 
@@ -818,23 +838,10 @@ function Environment.Functions:ResetSettings()
     }
 
     SaveSettings()
+end
 
-    for _, v in next, Players:GetPlayers() do
-        if v ~= LocalPlayer then
-            UnWrap(v)
-        end
-    end
-
-    for _, v in next, ServiceConnections do
-        v:Disconnect()
-    end
-
-    ServiceConnections.CrosshairConnection:Disconnect()
-
-    Environment.Crosshair.Parts.X:Remove()
-    Environment.Crosshair.Parts.Y:Remove()
-
-    Load()
+function Environment.Functions:GetDocumentation()
+    setclipboard("https://github.com/Exunys/Wall-Hack"); SendNotification(Title, "GitHub Documentation Page copied to clipboard!", 3)
 end
 
 --// Main
