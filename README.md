@@ -2,6 +2,11 @@
 ## Information
 This project represents a collection of visuals / wall hacks (Tracers, ESP, Boxes (2D & 3D), Head Dots & Crosshair).
 This script is also undetected because it uses [Synapse X's Drawing Library](https://x.synapse.to/docs/reference/drawing_lib.html).
+### Update Log
+[27/2/2022]
+- Fixed Alive & Team Check
+- Optimized Source Even More
+- Fixed some other minor bugs
 ### License
 This project is completely free and open sourced. But, that does not mean you own rights to it. Read this [document](https://github.com/Exunys/Wall-Hack/blob/main/LICENSE) for more information.
 You can re-use / stitch this script or any system of this project into any of your repositories, as long as you credit the developer [Exunys](https://github.com/Exunys).
