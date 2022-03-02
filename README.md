@@ -3,11 +3,10 @@
 This project represents a collection of visuals / wall hacks (Tracers, ESP, Boxes (2D & 3D), Head Dots & Crosshair).
 This script is also undetected because it uses [Synapse X's Drawing Library](https://x.synapse.to/docs/reference/drawing_lib.html).
 ### Update Log
-[27/2/2022]
+[2/3/2022]
 - Fixed Alive & Team Check
 - Optimized Source Even More
 - Replaced [Crosshair](https://github.com/Exunys/Crosshair-Script) with new [Crosshair V2](https://github.com/Exunys/Crosshair-V2)
-- Added Debug mode setting (Read about it below at the Solutions section of this document)
 - Fixed some other minor bugs
 ### License
 This project is completely free and open sourced. But, that does not mean you own rights to it. Read this [document](https://github.com/Exunys/Wall-Hack/blob/main/LICENSE) for more information.
@@ -103,7 +102,6 @@ getgenv().WallHack.Crosshair = {
 
 getgenv().WallHack.Settings = {
     SendNotifications = true,
-    Debug = true, -- Prints any errors / Informs if your exploit is supported
     SaveSettings = true, -- Re-execute upon changing
     ReloadOnTeleport = true,
     Enabled = true,
@@ -144,8 +142,6 @@ If the script is not running upon execution, try a few of the solutions below:
 If none of these solutions work, check if your exploit is supported (read the **Notices** part). If the script still doesn't work, contact Exunys & report the problem you are experiencing in detail.
 
 Check if your exploit is supported [here](https://github.com/Exunys/Wall-Hack/blob/main/Resources/Scripts/Support%20Checker.lua).
-
-Make sure you have `Debug` enabled in `getgenv().WallHack.Settings.Debug`. It should be set to `true` by default but incase it isn't, set it to `true`. This will print out incase your exploit does not support the script, any incoming errors and etc. If the script fails to run it should print out (in yellow text) `ED_WH_ERROR: Your Error Message Here`. Incase theres a unique (not repeated and meaningless) error which completely breaks the script and prevents it from running, please screenshot that error, find Exunys' contact information and send them the screenshot. The bug would probably be fixed as soon as possible.
 ## Functions
 This script includes built-in functions to control the Wall Hack.
 The functions can be accessed by indexing **Functions** in the Environment. Example:
@@ -221,22 +217,26 @@ Load the script by copying it from [here](https://github.com/Exunys/Wall-Hack/bl
 
 loadstring(game:HttpGet("https://raw.githubusercontent.com/Exunys/Wall-Hack/main/Resources/Scripts/Main.lua"))()
 
+--// Variables
+
+local Environment = getgenv().WallHack
+
 --// Script / Global Settings
 
-getgenv().WallHack.Settings.Enabled = true
-getgenv().WallHack.Settings.TeamCheck = false
-getgenv().WallHack.Settings.AliveCheck = true
+Environment.Settings.Enabled = true
+Environment.Settings.TeamCheck = false
+Environment.Settings.AliveCheck = true
 
 --// Visuals Settings
 
-getgenv().WallHack.Visuals.ESPSettings.Enabled = true
-getgenv().WallHack.Visuals.TracersSettings.Enabled = true
-getgenv().WallHack.Visuals.BoxSettings.Enabled = true
-getgenv().WallHack.Visuals.HeadDotSettings.Enabled = true
+Environment.Visuals.ESPSettings.Enabled = true
+Environment.Visuals.TracersSettings.Enabled = true
+Environment.Visuals.BoxSettings.Enabled = true
+Environment.Visuals.HeadDotSettings.Enabled = true
 
 --// Crosshair
 
-getgenv().WallHack.Crosshair.CrosshairSettings.Enabled = true
+Environment.Crosshair.CrosshairSettings.Enabled = true
 ```
 ## Contact Information
 - [Email](mailto:exunys@gmail.com)
