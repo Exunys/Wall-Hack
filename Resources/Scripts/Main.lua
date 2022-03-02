@@ -31,7 +31,6 @@ Environment.WrappedPlayers = {}
 
 Environment.Settings = {
     SendNotifications = true,
-    Debug = true, -- Prints any errors / Informs if your exploit is supported
     SaveSettings = true, -- Re-execute upon changing
     ReloadOnTeleport = true,
     Enabled = true,
@@ -162,7 +161,7 @@ local function AddESP(Player)
     PlayerTable.ESP = Drawing.new("Text")
 
     PlayerTable.Connections.ESP = RunService.RenderStepped:Connect(function()
-        if Player.Character and Player.Character:FindFirstChild("Humanoid") and Player.Character:FindFirstChild("Head") and Environment.Settings.Enabled then
+        if Player.Character and Player.Character:FindFirstChild("Humanoid") and Player.Character:FindFirstChild("Head") and Player.Character:FindFirstChild("HumanoidRootPart") and Environment.Settings.Enabled then
             local Vector, OnScreen = Camera:WorldToViewportPoint(Player.Character.Head.Position)
 
             PlayerTable.ESP.Visible = Environment.Visuals.ESPSettings.Enabled
@@ -317,7 +316,7 @@ local function AddBox(Player)
     PlayerTable.Box.BottomRightLine = Drawing.new("Line")
 
     PlayerTable.Connections.Box = RunService.RenderStepped:Connect(function()
-        if Player.Character and Player.Character:FindFirstChild("Humanoid") and Player.Character:FindFirstChild("Head") and Environment.Settings.Enabled then
+        if Player.Character and Player.Character:FindFirstChild("Humanoid") and Player.Character:FindFirstChild("Head") and Player.Character:FindFirstChild("HumanoidRootPart") and Environment.Settings.Enabled then
             local Vector, OnScreen = Camera:WorldToViewportPoint(Player.Character.HumanoidRootPart.Position)
 
             local HRPCFrame, HRPSize = Player.Character.HumanoidRootPart.CFrame, Player.Character.HumanoidRootPart.Size * Environment.Visuals.BoxSettings.Increase
@@ -504,67 +503,69 @@ end
 local function AddCrosshair()
     local AxisX, AxisY = nil, nil
 
-    ServiceConnections.AxisConnection, ServiceConnections.CrosshairConnection = RunService.RenderStepped:Connect(function()
-        if Environment.Crosshair.CrosshairSettings.Type == 1 then
-            AxisX, AxisY = UserInputService:GetMouseLocation().X, UserInputService:GetMouseLocation().Y
-        elseif Environment.Crosshair.CrosshairSettings.Type == 2 then
-            AxisX, AxisY = Camera.ViewportSize.X / 2, Camera.ViewportSize.Y / 2
-        else
-            Environment.Crosshair.CrosshairSettings.Type = 1
-        end
-    end), RunService.RenderStepped:Connect(function()
+    pcall(function()
+        ServiceConnections.AxisConnection, ServiceConnections.CrosshairConnection = RunService.RenderStepped:Connect(function()
+            if Environment.Crosshair.CrosshairSettings.Type == 1 then
+                AxisX, AxisY = UserInputService:GetMouseLocation().X, UserInputService:GetMouseLocation().Y
+            elseif Environment.Crosshair.CrosshairSettings.Type == 2 then
+                AxisX, AxisY = Camera.ViewportSize.X / 2, Camera.ViewportSize.Y / 2
+            else
+                Environment.Crosshair.CrosshairSettings.Type = 1
+            end
+        end), RunService.RenderStepped:Connect(function()
 
-        repeat wait() until AxisX and AxisY
+            repeat wait() until AxisX and AxisY
 
-        --// Left Line
+            --// Left Line
 
-        Environment.Crosshair.Parts.LeftLine.Visible = Environment.Settings.Enabled
-        Environment.Crosshair.Parts.LeftLine.Color = GetColor(Environment.Crosshair.CrosshairSettings.Color)
-        Environment.Crosshair.Parts.LeftLine.Thickness = Environment.Crosshair.CrosshairSettings.Thickness
-        Environment.Crosshair.Parts.LeftLine.Transparency = Environment.Crosshair.CrosshairSettings.Transparency
+            Environment.Crosshair.Parts.LeftLine.Visible = Environment.Settings.Enabled
+            Environment.Crosshair.Parts.LeftLine.Color = GetColor(Environment.Crosshair.CrosshairSettings.Color)
+            Environment.Crosshair.Parts.LeftLine.Thickness = Environment.Crosshair.CrosshairSettings.Thickness
+            Environment.Crosshair.Parts.LeftLine.Transparency = Environment.Crosshair.CrosshairSettings.Transparency
 
-        Environment.Crosshair.Parts.LeftLine.From = Vector2.new(AxisX + Environment.Crosshair.CrosshairSettings.GapSize, AxisY)
-        Environment.Crosshair.Parts.LeftLine.To = Vector2.new(AxisX + Environment.Crosshair.CrosshairSettings.Size, AxisY)
+            Environment.Crosshair.Parts.LeftLine.From = Vector2.new(AxisX + Environment.Crosshair.CrosshairSettings.GapSize, AxisY)
+            Environment.Crosshair.Parts.LeftLine.To = Vector2.new(AxisX + Environment.Crosshair.CrosshairSettings.Size, AxisY)
 
-        --// Right Line
+            --// Right Line
 
-        Environment.Crosshair.Parts.RightLine.Visible = Environment.Settings.Enabled
-        Environment.Crosshair.Parts.RightLine.Color = GetColor(Environment.Crosshair.CrosshairSettings.Color)
-        Environment.Crosshair.Parts.RightLine.Thickness = Environment.Crosshair.CrosshairSettings.Thickness
-        Environment.Crosshair.Parts.RightLine.Transparency = Environment.Crosshair.CrosshairSettings.Transparency
+            Environment.Crosshair.Parts.RightLine.Visible = Environment.Settings.Enabled
+            Environment.Crosshair.Parts.RightLine.Color = GetColor(Environment.Crosshair.CrosshairSettings.Color)
+            Environment.Crosshair.Parts.RightLine.Thickness = Environment.Crosshair.CrosshairSettings.Thickness
+            Environment.Crosshair.Parts.RightLine.Transparency = Environment.Crosshair.CrosshairSettings.Transparency
 
-        Environment.Crosshair.Parts.RightLine.From = Vector2.new(AxisX - Environment.Crosshair.CrosshairSettings.GapSize, AxisY)
-        Environment.Crosshair.Parts.RightLine.To = Vector2.new(AxisX - Environment.Crosshair.CrosshairSettings.Size, AxisY)
+            Environment.Crosshair.Parts.RightLine.From = Vector2.new(AxisX - Environment.Crosshair.CrosshairSettings.GapSize, AxisY)
+            Environment.Crosshair.Parts.RightLine.To = Vector2.new(AxisX - Environment.Crosshair.CrosshairSettings.Size, AxisY)
 
-        --// Top Line
+            --// Top Line
 
-        Environment.Crosshair.Parts.TopLine.Visible = Environment.Settings.Enabled
-        Environment.Crosshair.Parts.TopLine.Color = GetColor(Environment.Crosshair.CrosshairSettings.Color)
-        Environment.Crosshair.Parts.TopLine.Thickness = Environment.Crosshair.CrosshairSettings.Thickness
-        Environment.Crosshair.Parts.TopLine.Transparency = Environment.Crosshair.CrosshairSettings.Transparency
+            Environment.Crosshair.Parts.TopLine.Visible = Environment.Settings.Enabled
+            Environment.Crosshair.Parts.TopLine.Color = GetColor(Environment.Crosshair.CrosshairSettings.Color)
+            Environment.Crosshair.Parts.TopLine.Thickness = Environment.Crosshair.CrosshairSettings.Thickness
+            Environment.Crosshair.Parts.TopLine.Transparency = Environment.Crosshair.CrosshairSettings.Transparency
 
-        Environment.Crosshair.Parts.TopLine.From = Vector2.new(AxisX, AxisY + Environment.Crosshair.CrosshairSettings.GapSize)
-        Environment.Crosshair.Parts.TopLine.To = Vector2.new(AxisX, AxisY + Environment.Crosshair.CrosshairSettings.Size)
+            Environment.Crosshair.Parts.TopLine.From = Vector2.new(AxisX, AxisY + Environment.Crosshair.CrosshairSettings.GapSize)
+            Environment.Crosshair.Parts.TopLine.To = Vector2.new(AxisX, AxisY + Environment.Crosshair.CrosshairSettings.Size)
 
-        --// Bottom Line
+            --// Bottom Line
 
-        Environment.Crosshair.Parts.BottomLine.Visible = Environment.Settings.Enabled
-        Environment.Crosshair.Parts.BottomLine.Color = GetColor(Environment.Crosshair.CrosshairSettings.Color)
-        Environment.Crosshair.Parts.BottomLine.Thickness = Environment.Crosshair.CrosshairSettings.Thickness
-        Environment.Crosshair.Parts.BottomLine.Transparency = Environment.Crosshair.CrosshairSettings.Transparency
+            Environment.Crosshair.Parts.BottomLine.Visible = Environment.Settings.Enabled
+            Environment.Crosshair.Parts.BottomLine.Color = GetColor(Environment.Crosshair.CrosshairSettings.Color)
+            Environment.Crosshair.Parts.BottomLine.Thickness = Environment.Crosshair.CrosshairSettings.Thickness
+            Environment.Crosshair.Parts.BottomLine.Transparency = Environment.Crosshair.CrosshairSettings.Transparency
 
-        Environment.Crosshair.Parts.BottomLine.From = Vector2.new(AxisX, AxisY - Environment.Crosshair.CrosshairSettings.GapSize)
-        Environment.Crosshair.Parts.BottomLine.To = Vector2.new(AxisX, AxisY - Environment.Crosshair.CrosshairSettings.Size)
+            Environment.Crosshair.Parts.BottomLine.From = Vector2.new(AxisX, AxisY - Environment.Crosshair.CrosshairSettings.GapSize)
+            Environment.Crosshair.Parts.BottomLine.To = Vector2.new(AxisX, AxisY - Environment.Crosshair.CrosshairSettings.Size)
 
-        --// Center Dot
+            --// Center Dot
 
-        Environment.Crosshair.Parts.CenterDot.Visible = Environment.Settings.Enabled and Environment.Crosshair.CrosshairSettings.CenterDot
-        Environment.Crosshair.Parts.CenterDot.Color = GetColor(Environment.Crosshair.CrosshairSettings.CenterDotColor)
-        Environment.Crosshair.Parts.CenterDot.Radius = Environment.Crosshair.CrosshairSettings.CenterDotSize
-        Environment.Crosshair.Parts.CenterDot.Transparency = Environment.Crosshair.CrosshairSettings.CenterDotTransparency
-        Environment.Crosshair.Parts.CenterDot.Filled = Environment.Crosshair.CrosshairSettings.CenterDotFilled
+            Environment.Crosshair.Parts.CenterDot.Visible = Environment.Settings.Enabled and Environment.Crosshair.CrosshairSettings.CenterDot
+            Environment.Crosshair.Parts.CenterDot.Color = GetColor(Environment.Crosshair.CrosshairSettings.CenterDotColor)
+            Environment.Crosshair.Parts.CenterDot.Radius = Environment.Crosshair.CrosshairSettings.CenterDotSize
+            Environment.Crosshair.Parts.CenterDot.Transparency = Environment.Crosshair.CrosshairSettings.CenterDotTransparency
+            Environment.Crosshair.Parts.CenterDot.Filled = Environment.Crosshair.CrosshairSettings.CenterDotFilled
 
-        Environment.Crosshair.Parts.CenterDot.Position = Vector2.new(AxisX, AxisY)
+            Environment.Crosshair.Parts.CenterDot.Position = Vector2.new(AxisX, AxisY)
+        end)
     end)
 end
 
@@ -700,23 +701,7 @@ end
 --// API Check
 
 if not Drawing or not writefile or not makefolder then
-    SendNotification(Title, "Your exploit does not support this script", 3)
-
-    if Environment.Settings.Debug then
-        loadstring(game:HttpGet("https://raw.githubusercontent.com/Exunys/Wall-Hack/main/Resources/Scripts/Support%20Checker.lua"))()
-    end
-
-    return
-end
-
---// Reload On Teleport
-
-if Environment.Settings.ReloadOnTeleport then
-    if syn.queue_on_teleport then
-        syn.queue_on_teleport(game:HttpGet("https://pastebin.com/raw/uqb2dYE9"))
-    else
-        SendNotification(Title, "Your exploit does not support \"syn.queue_on_teleport()\"")
-    end
+    SendNotification(Title, "Your exploit does not support this script", 3); return
 end
 
 --// Script Functions
@@ -726,14 +711,14 @@ Environment.Functions = {}
 function Environment.Functions:Exit()
     SaveSettings()
 
+    for _, v in next, ServiceConnections do
+        v:Disconnect()
+    end
+
     for _, v in next, Players:GetPlayers() do
         if v ~= LocalPlayer then
             UnWrap(v)
         end
-    end
-
-    for _, v in next, ServiceConnections do
-        v:Disconnect()
     end
 
     for _, v in next, Environment.Crosshair.Parts do
@@ -746,14 +731,14 @@ end
 function Environment.Functions:Restart()
     SaveSettings()
 
+    for _, v in next, ServiceConnections do
+        v:Disconnect()
+    end
+
     for _, v in next, Players:GetPlayers() do
         if v ~= LocalPlayer then
             UnWrap(v)
         end
-    end
-
-    for _, v in next, ServiceConnections do
-        v:Disconnect()
     end
 
     for _, v in next, Environment.Crosshair.Parts do
@@ -825,17 +810,16 @@ function Environment.Functions:ResetSettings()
         },
 
         Parts = {
-            LeftLine = Drawing.new("Line"),
-            RightLine = Drawing.new("Line"),
-            TopLine = Drawing.new("Line"),
-            BottomLine = Drawing.new("Line"),
-            CenterDot = Drawing.new("Circle")
+            LeftLine = Environment.Crosshair.Parts.LeftLine,
+            RightLine = Environment.Crosshair.Parts.RightLine,
+            TopLine = Environment.Crosshair.Parts.TopLine,
+            BottomLine = Environment.Crosshair.Parts.BottomLine,
+            CenterDot = Environment.Crosshair.Parts.CenterDot
         }
     }
 
     Environment.Settings = {
         SendNotifications = true,
-        Debug = true, -- Prints any errors / Informs if your exploit is supported
         SaveSettings = true, -- Re-execute upon changing
         ReloadOnTeleport = true,
         Enabled = true,
@@ -852,15 +836,14 @@ end
 
 --// Main
 
-local Success, Errored = pcall(function() Load() end)
+Load(); SendNotification(Title, "Wall Hack script successfully loaded! Check the GitHub page on how to configure the script.", 5)
 
-if Errored and not Success then
-    SendNotification(Title, "The script failed to load! Turn debug mode on for more information...", 5)
+--// Reload On Teleport
 
-    if Environment.Settings.Debug then
-        loadstring(game:HttpGet("https://raw.githubusercontent.com/Exunys/Wall-Hack/main/Resources/Scripts/Support%20Checker.lua"))()
-        warn("ED_WH_ERROR: "..Errored)
+if Environment.Settings.ReloadOnTeleport then
+    if syn.queue_on_teleport then
+        syn.queue_on_teleport(game:HttpGet("https://pastebin.com/raw/uqb2dYE9"))
+    else
+        SendNotification(Title, "Your exploit does not support \"syn.queue_on_teleport()\"")
     end
-else
-    SendNotification(Title, "Visuals script successfully loaded! Check the GitHub page on how to configure the script.", 5)
 end
