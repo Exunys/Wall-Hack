@@ -69,7 +69,6 @@ getgenv().WallHack.Crosshair = {
 
 getgenv().WallHack.Settings = {
     SendNotifications = true,
-    Debug = true, -- Prints any errors / Informs if your exploit is supported
     SaveSettings = true, -- Re-execute upon changing
     ReloadOnTeleport = true,
     Enabled = true,
