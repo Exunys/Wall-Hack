@@ -112,7 +112,7 @@ getgenv().WallHack.Settings = {
 #### Graphic View (Horizontal Tree Diagram)
 ![image](https://user-images.githubusercontent.com/76539058/161168787-50244d9a-ddad-4fd4-80d4-1bb3c76a11b5.png)
 * You can also find the JSON format (which is the way they get stored) [here](https://github.com/Exunys/Wall-Hack/tree/main/Resources/Settings).
-* The Lua format of the settings / the factory reset script can be found [here](https://github.com/Exunys/Wall-Hack/blob/main/Resources/Scripts/Manual%20Factory%20Reset%20Settings.lua).
+* The Lua format of the settings / the factory reset script can be found [here](https://github.com/Exunys/Wall-Hack/blob/main/Resources/Scripts/Manual%20Factory%20Reset%20Settings.lua). (The Main script must be ran in the background before executing this script)
 
 By reading the visual representation of the configuration part of the environment table, it should be pretty easy to configure the script afterwards. Here are some examples:
 
