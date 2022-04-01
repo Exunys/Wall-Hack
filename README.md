@@ -88,7 +88,7 @@ getgenv().WallHack.Crosshair = {
     CenterDotColor = "0, 255, 0",
     CenterDotSize = 1,
     CenterDotTransparency = 1,
-    CenterDotFilled = true,
+    CenterDotFilled = true
   },
 
   Parts = {
