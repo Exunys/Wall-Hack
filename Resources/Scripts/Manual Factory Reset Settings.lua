@@ -42,20 +42,23 @@ getgenv().WallHack.Visuals = {
     }
 }
 
-getgenv().WallHack.Crosshair = {}
-getgenv().WallHack.Crosshair.CrosshairSettings = {
-    Enabled = true,
-    Type = 1, -- 1 - Mouse; 2 - Center
-    Size = 12,
-    Thickness = 1,
-    Color = "0, 255, 0",
-    Transparency = 1,
-    GapSize = 5,
-    CenterDot = false,
-    CenterDotColor = "0, 255, 0",
-    CenterDotSize = 1,
-    CenterDotTransparency = 1,
-    CenterDotFilled = true
+getgenv().WallHack.Crosshair = {
+    CrosshairSettings = {
+        Enabled = true,
+        Type = 1, -- 1 - Mouse; 2 - Center
+        Size = 12,
+        Thickness = 1,
+        Color = "0, 255, 0",
+        Transparency = 1,
+        GapSize = 5,
+        CenterDot = false,
+        CenterDotColor = "0, 255, 0",
+        CenterDotSize = 1,
+        CenterDotTransparency = 1,
+        CenterDotFilled = true
+    },
+    
+    Parts = {}
 }
 
 getgenv().WallHack.Settings = {
