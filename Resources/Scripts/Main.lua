@@ -96,7 +96,7 @@ end
 local function AddESP(Player)
     local PlayerTable = GetPlayerTable(Player)
 
-    PlayerTable.ESP = Drawing.new("Text")
+    PlayerTable.ESP = Drawingnew("Text")
 
     PlayerTable.Connections.ESP = RunService.RenderStepped:Connect(function()
         if Player.Character and Player.Character:FindFirstChild("Humanoid") and Player.Character:FindFirstChild("Head") and Player.Character:FindFirstChild("HumanoidRootPart") and Environment.Settings.Enabled then
@@ -180,7 +180,7 @@ end
 local function AddTracer(Player)
     local PlayerTable = GetPlayerTable(Player)
 
-    PlayerTable.Tracer = Drawing.new("Line")
+    PlayerTable.Tracer = Drawingnew("Line")
 
     PlayerTable.Connections.Tracer = RunService.RenderStepped:Connect(function()
         if Player.Character and Player.Character:FindFirstChild("Humanoid") and Player.Character:FindFirstChild("HumanoidRootPart") and Environment.Settings.Enabled then
@@ -245,13 +245,13 @@ end
 local function AddBox(Player)
     local PlayerTable = GetPlayerTable(Player)
 
-    PlayerTable.Box.Square = Drawing.new("Square")
+    PlayerTable.Box.Square = Drawingnew("Square")
 
-    PlayerTable.Box.TopLeftLine = Drawing.new("Line")
-    PlayerTable.Box.TopLeftLine = Drawing.new("Line")
-    PlayerTable.Box.TopRightLine = Drawing.new("Line")
-    PlayerTable.Box.BottomLeftLine = Drawing.new("Line")
-    PlayerTable.Box.BottomRightLine = Drawing.new("Line")
+    PlayerTable.Box.TopLeftLine = Drawingnew("Line")
+    PlayerTable.Box.TopLeftLine = Drawingnew("Line")
+    PlayerTable.Box.TopRightLine = Drawingnew("Line")
+    PlayerTable.Box.BottomLeftLine = Drawingnew("Line")
+    PlayerTable.Box.BottomRightLine = Drawingnew("Line")
 
     PlayerTable.Connections.Box = RunService.RenderStepped:Connect(function()
         if Player.Character and Player.Character:FindFirstChild("Humanoid") and Player.Character:FindFirstChild("Head") and Player.Character:FindFirstChild("HumanoidRootPart") and Environment.Settings.Enabled then
@@ -384,7 +384,7 @@ end
 local function AddHeadDot(Player)
     local PlayerTable = GetPlayerTable(Player)
 
-    PlayerTable.HeadDot = Drawing.new("Circle")
+    PlayerTable.HeadDot = Drawingnew("Circle")
 
     PlayerTable.Connections.HeadDot = RunService.RenderStepped:Connect(function()
         if Player.Character and Player.Character:FindFirstChild("Humanoid") and Player.Character:FindFirstChild("Head") and Environment.Settings.Enabled then
