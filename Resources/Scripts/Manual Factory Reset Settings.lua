@@ -42,8 +42,7 @@ getgenv().WallHack.Visuals = {
     }
 }
 
-getgenv().WallHack.Crosshair = {
-  CrosshairSettings = {
+getgenv().WallHack.Crosshair.CrosshairSettings = {
     Enabled = true,
     Type = 1, -- 1 - Mouse; 2 - Center
     Size = 12,
@@ -56,15 +55,6 @@ getgenv().WallHack.Crosshair = {
     CenterDotSize = 1,
     CenterDotTransparency = 1,
     CenterDotFilled = true
-  },
-
-  Parts = {
-    LeftLine = getgenv().WallHack.Crosshair.Parts.LeftLine,
-    RightLine = getgenv().WallHack.Crosshair.Parts.RightLine,
-    TopLine = getgenv().WallHack.Crosshair.Parts.TopLine,
-    BottomLine = getgenv().WallHack.Crosshair.Parts.BottomLine,
-    CenterDot = getgenv().WallHack.Crosshair.Parts.CenterDot
-  }
 }
 
 getgenv().WallHack.Settings = {
