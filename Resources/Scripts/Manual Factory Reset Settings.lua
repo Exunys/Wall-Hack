@@ -42,6 +42,7 @@ getgenv().WallHack.Visuals = {
     }
 }
 
+getgenv().WallHack.Crosshair = {}
 getgenv().WallHack.Crosshair.CrosshairSettings = {
     Enabled = true,
     Type = 1, -- 1 - Mouse; 2 - Center
