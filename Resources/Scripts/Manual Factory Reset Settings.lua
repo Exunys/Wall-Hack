@@ -59,11 +59,11 @@ getgenv().WallHack.Crosshair = {
   },
 
   Parts = {
-    LeftLine = getgenv().WallHack.Crosshair.CrosshairSettings.Parts.LeftLine,
-    RightLine = getgenv().WallHack.Crosshair.CrosshairSettings.Parts.RightLine,
-    TopLine = getgenv().WallHack.Crosshair.CrosshairSettings.Parts.TopLine,
-    BottomLine = getgenv().WallHack.Crosshair.CrosshairSettings.Parts.BottomLine,
-    CenterDot = getgenv().WallHack.Crosshair.CrosshairSettings.CenterDot
+    LeftLine = getgenv().WallHack.Crosshair.Parts.LeftLine,
+    RightLine = getgenv().WallHack.Crosshair.Parts.RightLine,
+    TopLine = getgenv().WallHack.Crosshair.Parts.TopLine,
+    BottomLine = getgenv().WallHack.Crosshair.Parts.BottomLine,
+    CenterDot = getgenv().WallHack.Crosshair.Parts.CenterDot
   }
 }
 
