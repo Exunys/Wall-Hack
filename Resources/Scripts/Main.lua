@@ -25,88 +25,26 @@ local Title = "Exunys Developer"
 local FileNames = {"Wall Hack", "Configuration.json", "Visuals.json", "Crosshair.json"}
 local ServiceConnections = {}
 
+--// Cached Functions
+
+local tonumber, tostring, next, pcall, type, loadstring = tonumber, tostring, next, pcall, type, loadstring
+local Color3fromRGB, Vector2new, Vector3new, Drawingnew = Color3.fromRGB, Vector2.new, Vector3.new, Drawing.new
+local stringmatch = string.match
+local mathfloor = math.floor
+local coroutinewrap = coroutine.wrap
+
 --// Script Settings
 
 Environment.WrappedPlayers = {}
 
-Environment.Settings = {
-    SendNotifications = true,
-    SaveSettings = true, -- Re-execute upon changing
-    ReloadOnTeleport = true,
-    Enabled = true,
-    TeamCheck = false,
-    AliveCheck = true
-}
+loadstring(game:HttpGet("https://raw.githubusercontent.com/Exunys/Wall-Hack/main/Resources/Scripts/Manual%20Factory%20Reset%20Settings.lua"))()
 
---// Wall Hack
-
-Environment.Visuals = {
-    ESPSettings = {
-        Enabled = true,
-        TextColor = "30, 100, 255",
-        TextSize = 14,
-        Center = true,
-        Outline = true,
-        OutlineColor = "0, 0, 0",
-        TextTransparency = 0.7,
-        TextFont = Drawing.Fonts.Monospace, -- UI, System, Plex, Monospace
-        DisplayDistance = true,
-        DisplayHealth = true,
-        DisplayName = true
-    },
-
-    TracersSettings = {
-        Enabled = true,
-        Type = 1, -- 1 - Bottom; 2 - Center; 3 - Mouse
-        Transparency = 0.7,
-        Thickness = 1,
-        Color = "50, 120, 255"
-    },
-
-    BoxSettings = {
-        Enabled = true,
-        Type = 1; -- 1 - 3D; 2 - 2D;
-        Color = "50, 120, 255",
-        Transparency = 0.7,
-        Thickness = 1,
-        Filled = false, -- For 2D
-        Increase = 1
-    },
-
-    HeadDotSettings = {
-        Enabled = true,
-        Color = "50, 120, 255",
-        Transparency = 0.5,
-        Thickness = 1,
-        Filled = true,
-        Sides = 30,
-        Size = 2
-    }
-}
-
-Environment.Crosshair = {
-    CrosshairSettings = {
-        Enabled = true,
-        Type = 1, -- 1 - Mouse; 2 - Center
-        Size = 12,
-        Thickness = 1,
-        Color = "0, 255, 0",
-        Transparency = 1,
-        GapSize = 5,
-        CenterDot = false,
-        CenterDotColor = "0, 255, 0",
-        CenterDotSize = 1,
-        CenterDotTransparency = 1,
-        CenterDotFilled = true
-    },
-
-    Parts = {
-        LeftLine = Drawing.new("Line"),
-        RightLine = Drawing.new("Line"),
-        TopLine = Drawing.new("Line"),
-        BottomLine = Drawing.new("Line"),
-        CenterDot = Drawing.new("Circle")
-    }
+Environment.Crosshair.Parts = {
+    LeftLine = Drawingnew("Line"),
+    RightLine = Drawingnew("Line"),
+    TopLine = Drawingnew("Line"),
+    BottomLine = Drawingnew("Line"),
+    CenterDot = Drawingnew("Circle")
 }
 
 --// Core Functions
@@ -138,11 +76,11 @@ local function SendNotification(TitleArg, DescriptionArg, DurationArg)
 end
 
 local function GetColor(Color)
-    local R = tonumber(string.match(Color, "([%d]+)[%s]*,[%s]*[%d]+[%s]*,[%s]*[%d]+"))
-    local G = tonumber(string.match(Color, "[%d]+[%s]*,[%s]*([%d]+)[%s]*,[%s]*[%d]+"))
-    local B = tonumber(string.match(Color, "[%d]+[%s]*,[%s]*[%d]+[%s]*,[%s]*([%d]+)"))
+    local R = tonumber(stringmatch(Color, "([%d]+)[%s]*,[%s]*[%d]+[%s]*,[%s]*[%d]+"))
+    local G = tonumber(stringmatch(Color, "[%d]+[%s]*,[%s]*([%d]+)[%s]*,[%s]*[%d]+"))
+    local B = tonumber(stringmatch(Color, "[%d]+[%s]*,[%s]*[%d]+[%s]*,[%s]*([%d]+)"))
 
-    return Color3.fromRGB(R, G, B)
+    return Color3fromRGB(R, G, B)
 end
 
 local function GetPlayerTable(Player)
@@ -175,11 +113,11 @@ local function AddESP(Player)
                 PlayerTable.ESP.Transparency = Environment.Visuals.ESPSettings.TextTransparency
                 PlayerTable.ESP.Font = Environment.Visuals.ESPSettings.TextFont
 
-                PlayerTable.ESP.Position = Vector2.new(Vector.X, Vector.Y - 25)
+                PlayerTable.ESP.Position = Vector2new(Vector.X, Vector.Y - 25)
 
                 local Parts = {
                     Health = "("..tostring(Player.Character.Humanoid.Health)..")",
-                    Distance = "["..tostring(math.floor((Player.Character.HumanoidRootPart.Position - (LocalPlayer.Character.HumanoidRootPart.Position or Vector3.new(0, 0, 0))).Magnitude)).."]",
+                    Distance = "["..tostring(mathfloor((Player.Character.HumanoidRootPart.Position - (LocalPlayer.Character.HumanoidRootPart.Position or Vector3new(0, 0, 0))).Magnitude)).."]",
                     Name = Player.Name
                 }
 
@@ -256,16 +194,16 @@ local function AddTracer(Player)
                 PlayerTable.Tracer.Color = GetColor(Environment.Visuals.TracersSettings.Color)
                 PlayerTable.Tracer.Transparency = Environment.Visuals.TracersSettings.Transparency
 
-                PlayerTable.Tracer.To = Vector2.new(Vector.X, Vector.Y)
+                PlayerTable.Tracer.To = Vector2new(Vector.X, Vector.Y)
 
                 if Environment.Visuals.TracersSettings.Type == 1 then
-                    PlayerTable.Tracer.From = Vector2.new(Camera.ViewportSize.X / 2, Camera.ViewportSize.Y)
+                    PlayerTable.Tracer.From = Vector2new(Camera.ViewportSize.X / 2, Camera.ViewportSize.Y)
                 elseif Environment.Visuals.TracersSettings.Type == 2 then
-                    PlayerTable.Tracer.From = Vector2.new(Camera.ViewportSize.X / 2, Camera.ViewportSize.Y / 2)
+                    PlayerTable.Tracer.From = Vector2new(Camera.ViewportSize.X / 2, Camera.ViewportSize.Y / 2)
                 elseif Environment.Visuals.TracersSettings.Type == 3 then
-                    PlayerTable.Tracer.From = Vector2.new(UserInputService:GetMouseLocation().X, UserInputService:GetMouseLocation().Y)
+                    PlayerTable.Tracer.From = Vector2new(UserInputService:GetMouseLocation().X, UserInputService:GetMouseLocation().Y)
                 else
-                    PlayerTable.Tracer.From = Vector2.new(Camera.ViewportSize.X / 2, Camera.ViewportSize.Y)
+                    PlayerTable.Tracer.From = Vector2new(Camera.ViewportSize.X / 2, Camera.ViewportSize.Y)
                 end
             end
 
@@ -326,8 +264,8 @@ local function AddBox(Player)
             local BottomLeftPosition = Camera:WorldToViewportPoint(HRPCFrame * CFrame.new(HRPSize.X, -HRPSize.Y, 0).Position)
             local BottomRightPosition = Camera:WorldToViewportPoint(HRPCFrame * CFrame.new(-HRPSize.X, -HRPSize.Y, 0).Position)
 
-            local HeadOffset = Camera:WorldToViewportPoint(Player.Character.Head.Position + Vector3.new(0, 0.5, 0))
-			local LegsOffset = Camera:WorldToViewportPoint(Player.Character.HumanoidRootPart.Position - Vector3.new(0, 3, 0))
+            local HeadOffset = Camera:WorldToViewportPoint(Player.Character.Head.Position + Vector3new(0, 0.5, 0))
+			local LegsOffset = Camera:WorldToViewportPoint(Player.Character.HumanoidRootPart.Position - Vector3new(0, 3, 0))
 
             local function Visibility(Bool)
                 if Environment.Visuals.BoxSettings.Type == 1 then
@@ -364,8 +302,8 @@ local function AddBox(Player)
                 PlayerTable.Box.Square.Transparency = Environment.Visuals.BoxSettings.Transparency
                 PlayerTable.Box.Square.Filled = Environment.Visuals.BoxSettings.Filled
 
-                PlayerTable.Box.Square.Size = Vector2.new(2000 / Vector.Z, HeadOffset.Y - LegsOffset.Y)
-				PlayerTable.Box.Square.Position = Vector2.new(Vector.X - PlayerTable.Box.Square.Size.X / 2, Vector.Y - PlayerTable.Box.Square.Size.Y / 2)
+                PlayerTable.Box.Square.Size = Vector2new(2000 / Vector.Z, HeadOffset.Y - LegsOffset.Y)
+				PlayerTable.Box.Square.Position = Vector2new(Vector.X - PlayerTable.Box.Square.Size.X / 2, Vector.Y - PlayerTable.Box.Square.Size.Y / 2)
             end
 
             local function Update3DBox()
@@ -385,17 +323,17 @@ local function AddBox(Player)
                 PlayerTable.Box.BottomRightLine.Transparency = Environment.Visuals.BoxSettings.Transparency
                 PlayerTable.Box.BottomRightLine.Color = GetColor(Environment.Visuals.BoxSettings.Color)
 
-                PlayerTable.Box.TopLeftLine.From = Vector2.new(TopLeftPosition.X, TopLeftPosition.Y)
-                PlayerTable.Box.TopLeftLine.To = Vector2.new(TopRightPosition.X, TopRightPosition.Y)
+                PlayerTable.Box.TopLeftLine.From = Vector2new(TopLeftPosition.X, TopLeftPosition.Y)
+                PlayerTable.Box.TopLeftLine.To = Vector2new(TopRightPosition.X, TopRightPosition.Y)
 
-                PlayerTable.Box.TopRightLine.From = Vector2.new(TopRightPosition.X, TopRightPosition.Y)
-                PlayerTable.Box.TopRightLine.To = Vector2.new(BottomRightPosition.X, BottomRightPosition.Y)
+                PlayerTable.Box.TopRightLine.From = Vector2new(TopRightPosition.X, TopRightPosition.Y)
+                PlayerTable.Box.TopRightLine.To = Vector2new(BottomRightPosition.X, BottomRightPosition.Y)
 
-                PlayerTable.Box.BottomLeftLine.From = Vector2.new(BottomLeftPosition.X, BottomLeftPosition.Y)
-                PlayerTable.Box.BottomLeftLine.To = Vector2.new(TopLeftPosition.X, TopLeftPosition.Y)
+                PlayerTable.Box.BottomLeftLine.From = Vector2new(BottomLeftPosition.X, BottomLeftPosition.Y)
+                PlayerTable.Box.BottomLeftLine.To = Vector2new(TopLeftPosition.X, TopLeftPosition.Y)
 
-                PlayerTable.Box.BottomRightLine.From = Vector2.new(BottomRightPosition.X, BottomRightPosition.Y)
-                PlayerTable.Box.BottomRightLine.To = Vector2.new(BottomLeftPosition.X, BottomLeftPosition.Y)
+                PlayerTable.Box.BottomRightLine.From = Vector2new(BottomRightPosition.X, BottomRightPosition.Y)
+                PlayerTable.Box.BottomRightLine.To = Vector2new(BottomLeftPosition.X, BottomLeftPosition.Y)
             end
 
             if OnScreen then
@@ -462,7 +400,7 @@ local function AddHeadDot(Player)
                 PlayerTable.HeadDot.Filled = Environment.Visuals.HeadDotSettings.Filled
                 PlayerTable.HeadDot.Radius = Environment.Visuals.HeadDotSettings.Size
 
-                PlayerTable.HeadDot.Position = Vector2.new(Vector.X, Vector.Y)
+                PlayerTable.HeadDot.Position = Vector2new(Vector.X, Vector.Y)
             end
 
             if OnScreen then
@@ -523,8 +461,8 @@ local function AddCrosshair()
             Environment.Crosshair.Parts.LeftLine.Thickness = Environment.Crosshair.CrosshairSettings.Thickness
             Environment.Crosshair.Parts.LeftLine.Transparency = Environment.Crosshair.CrosshairSettings.Transparency
 
-            Environment.Crosshair.Parts.LeftLine.From = Vector2.new(AxisX + Environment.Crosshair.CrosshairSettings.GapSize, AxisY)
-            Environment.Crosshair.Parts.LeftLine.To = Vector2.new(AxisX + Environment.Crosshair.CrosshairSettings.Size, AxisY)
+            Environment.Crosshair.Parts.LeftLine.From = Vector2new(AxisX + Environment.Crosshair.CrosshairSettings.GapSize, AxisY)
+            Environment.Crosshair.Parts.LeftLine.To = Vector2new(AxisX + Environment.Crosshair.CrosshairSettings.Size, AxisY)
 
             --// Right Line
 
@@ -533,8 +471,8 @@ local function AddCrosshair()
             Environment.Crosshair.Parts.RightLine.Thickness = Environment.Crosshair.CrosshairSettings.Thickness
             Environment.Crosshair.Parts.RightLine.Transparency = Environment.Crosshair.CrosshairSettings.Transparency
 
-            Environment.Crosshair.Parts.RightLine.From = Vector2.new(AxisX - Environment.Crosshair.CrosshairSettings.GapSize, AxisY)
-            Environment.Crosshair.Parts.RightLine.To = Vector2.new(AxisX - Environment.Crosshair.CrosshairSettings.Size, AxisY)
+            Environment.Crosshair.Parts.RightLine.From = Vector2new(AxisX - Environment.Crosshair.CrosshairSettings.GapSize, AxisY)
+            Environment.Crosshair.Parts.RightLine.To = Vector2new(AxisX - Environment.Crosshair.CrosshairSettings.Size, AxisY)
 
             --// Top Line
 
@@ -543,8 +481,8 @@ local function AddCrosshair()
             Environment.Crosshair.Parts.TopLine.Thickness = Environment.Crosshair.CrosshairSettings.Thickness
             Environment.Crosshair.Parts.TopLine.Transparency = Environment.Crosshair.CrosshairSettings.Transparency
 
-            Environment.Crosshair.Parts.TopLine.From = Vector2.new(AxisX, AxisY + Environment.Crosshair.CrosshairSettings.GapSize)
-            Environment.Crosshair.Parts.TopLine.To = Vector2.new(AxisX, AxisY + Environment.Crosshair.CrosshairSettings.Size)
+            Environment.Crosshair.Parts.TopLine.From = Vector2new(AxisX, AxisY + Environment.Crosshair.CrosshairSettings.GapSize)
+            Environment.Crosshair.Parts.TopLine.To = Vector2new(AxisX, AxisY + Environment.Crosshair.CrosshairSettings.Size)
 
             --// Bottom Line
 
@@ -553,8 +491,8 @@ local function AddCrosshair()
             Environment.Crosshair.Parts.BottomLine.Thickness = Environment.Crosshair.CrosshairSettings.Thickness
             Environment.Crosshair.Parts.BottomLine.Transparency = Environment.Crosshair.CrosshairSettings.Transparency
 
-            Environment.Crosshair.Parts.BottomLine.From = Vector2.new(AxisX, AxisY - Environment.Crosshair.CrosshairSettings.GapSize)
-            Environment.Crosshair.Parts.BottomLine.To = Vector2.new(AxisX, AxisY - Environment.Crosshair.CrosshairSettings.Size)
+            Environment.Crosshair.Parts.BottomLine.From = Vector2new(AxisX, AxisY - Environment.Crosshair.CrosshairSettings.GapSize)
+            Environment.Crosshair.Parts.BottomLine.To = Vector2new(AxisX, AxisY - Environment.Crosshair.CrosshairSettings.Size)
 
             --// Center Dot
 
@@ -564,7 +502,7 @@ local function AddCrosshair()
             Environment.Crosshair.Parts.CenterDot.Transparency = Environment.Crosshair.CrosshairSettings.CenterDotTransparency
             Environment.Crosshair.Parts.CenterDot.Filled = Environment.Crosshair.CrosshairSettings.CenterDotFilled
 
-            Environment.Crosshair.Parts.CenterDot.Position = Vector2.new(AxisX, AxisY)
+            Environment.Crosshair.Parts.CenterDot.Position = Vector2new(AxisX, AxisY)
         end)
     end)
 end
@@ -595,7 +533,8 @@ local function Wrap(Player)
     end
 
     if not Table then
-        table.insert(Environment.WrappedPlayers, 1, Value)
+        Environment.WrappedPlayers[#Environment.WrappedPlayers + 1] = Value
+
         AddESP(Player)
         AddTracer(Player)
         AddBox(Player)
@@ -687,7 +626,7 @@ if Environment.Settings.SaveSettings then
         Environment.Crosshair.CrosshairSettings = Decode(readfile(Title.."/"..FileNames[1].."/"..FileNames[4]))
     end
 
-    coroutine.wrap(function()
+    coroutinewrap(function()
         while wait(10) do
             SaveSettings()
         end
@@ -749,83 +688,17 @@ function Environment.Functions:Restart()
 end
 
 function Environment.Functions:ResetSettings()
-    Environment.Visuals = {
-        ESPSettings = {
-            Enabled = true,
-            TextColor = "20, 90, 255",
-            TextSize = 14,
-            Center = true,
-            Outline = true,
-            OutlineColor = "0, 0, 0",
-            TextTransparency = 0.7,
-            TextFont = Drawing.Fonts.Monospace, -- UI, System, Plex, Monospace
-            DisplayDistance = true,
-            DisplayHealth = true,
-            DisplayName = true
-        },
-
-        TracersSettings = {
-            Enabled = true,
-            Type = 1, -- 1 - Bottom; 2 - Center; 3 - Mouse
-            Transparency = 0.7,
-            Thickness = 1,
-            Color = "50, 120, 255"
-        },
-
-        BoxSettings = {
-            Enabled = true,
-            Type = 1; -- 1 - 3D; 2 - 2D;
-            Color = "50, 120, 255",
-            Transparency = 0.7,
-            Thickness = 1,
-            Filled = false, -- For 2D
-            Increase = 1
-        },
-
-        HeadDotSettings = {
-            Enabled = true,
-            Color = "50, 120, 255",
-            Transparency = 0.5,
-            Thickness = 1,
-            Filled = true,
-            Sides = 30,
-            Size = 2
-        }
+    local Parts = {
+        LeftLine = Environment.Crosshair.Parts.LeftLine,
+        RightLine = Environment.Crosshair.Parts.RightLine,
+        TopLine = Environment.Crosshair.Parts.TopLine,
+        BottomLine = Environment.Crosshair.Parts.BottomLine,
+        CenterDot = Environment.Crosshair.Parts.CenterDot
     }
 
-    Environment.Crosshair = {
-        CrosshairSettings = {
-            Enabled = true,
-            Type = 1, -- 1 - Mouse; 2 - Center
-            Size = 12,
-            Thickness = 1,
-            Color = "0, 255, 0",
-            Transparency = 1,
-            GapSize = 5,
-            CenterDot = false,
-            CenterDotColor = "0, 255, 0",
-            CenterDotSize = 1,
-            CenterDotTransparency = 1,
-            CenterDotFilled = true
-        },
-
-        Parts = {
-            LeftLine = Environment.Crosshair.Parts.LeftLine,
-            RightLine = Environment.Crosshair.Parts.RightLine,
-            TopLine = Environment.Crosshair.Parts.TopLine,
-            BottomLine = Environment.Crosshair.Parts.BottomLine,
-            CenterDot = Environment.Crosshair.Parts.CenterDot
-        }
-    }
-
-    Environment.Settings = {
-        SendNotifications = true,
-        SaveSettings = true, -- Re-execute upon changing
-        ReloadOnTeleport = true,
-        Enabled = true,
-        TeamCheck = false,
-        AliveCheck = true
-    }
+    loadstring(game:HttpGet("https://raw.githubusercontent.com/Exunys/Wall-Hack/main/Resources/Scripts/Manual%20Factory%20Reset%20Settings.lua"))()
+    
+    Environment.Crosshair.Parts = Parts
 
     SaveSettings()
 end
@@ -841,8 +714,10 @@ Load(); SendNotification(Title, "Wall Hack script successfully loaded! Check the
 --// Reload On Teleport
 
 if Environment.Settings.ReloadOnTeleport then
-    if syn.queue_on_teleport then
-        syn.queue_on_teleport(game:HttpGet("https://pastebin.com/raw/uqb2dYE9"))
+    local queueonteleport = queue_on_teleport or syn.queue_on_teleport
+
+    if queue_on_teleport then
+        queue_on_teleport(game:HttpGet("https://raw.githubusercontent.com/Exunys/Wall-Hack/main/Resources/Scripts/Main.lua"))
     else
         SendNotification(Title, "Your exploit does not support \"syn.queue_on_teleport()\"")
     end
