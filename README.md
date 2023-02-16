@@ -1,5 +1,6 @@
 # Wall Hack
 ## Information
+### ℹ️This repository is discontinued. Use the new script [AirHub](https://github.com/Exunys/AirHub).
 This project represents a collection of visuals / wall hacks (Tracers, ESP, Boxes (2D & 3D), Head Dots & Crosshair).
 This script is also undetected because it uses [Synapse X's Drawing Library](https://x.synapse.to/docs/reference/drawing_lib.html).
 ### Update Log
